@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2013-01-04 16:37:35 david>
+;; Time-stamp: <2014-04-02 17:43:47 davidh>
 
 ;;; Commentary:
 
@@ -52,6 +52,7 @@
 (if (fboundp 'tooltip-mode) (tooltip-mode -1))
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (if (fboundp 'fringe-mode) (fringe-mode 0))
+(if (fboundp 'display-time-mode) (display-time-mode 1))
 
 (global-font-lock-mode 1)
 (menu-bar-no-scroll-bar)
@@ -66,36 +67,36 @@
 ;; (set-background-color "white")
 ;; (set-foreground-color "black")
 
-(set-face-background 'modeline "darkred")
-(set-face-foreground 'modeline "white")
+;;(set-face-background 'modeline "darkred")
+;;(set-face-foreground 'modeline "white")
 
 
 ;;; https://github.com/dimitri/el-get
 (add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-dir))
 (unless (require 'el-get nil t)
   (url-retrieve "https://raw.github.com/dimitri/el-get/master/el-get-install.el" 
-				(lambda (s) (goto-char (point-max)) (eval-print-last-sexp))))
+				(progn (s) (goto-char (point-max)) (eval-print-last-sexp))))
 
 ;;; local sources
 (setq el-get-sources 
-      '((:name buffer-move :after (lambda () 
-									(global-set-key "\C-h\C-h" 'buf-move-left)
-									(global-set-key "\C-h\C-j" 'buf-move-down)
-									(global-set-key "\C-h\C-k" 'buf-move-up)
-									(global-set-key "\C-h\C-l" 'buf-move-right)))
+      '((:name buffer-move :after (progn () 
+										 (global-set-key "\C-h\C-h" 'buf-move-left)
+										 (global-set-key "\C-h\C-j" 'buf-move-down)
+										 (global-set-key "\C-h\C-k" 'buf-move-up)
+										 (global-set-key "\C-h\C-l" 'buf-move-right)))
 
-		(:name js2-mode :after (lambda ()
-								 (add-to-list 'auto-mode-alist 
-											  '("\\.json\\'" . js2-mode))
-								 (add-to-list 'auto-mode-alist 
-											  '("\\.js\\'" . js2-mode))))
+		(:name js2-mode :after (progn ()
+									  (add-to-list 'auto-mode-alist 
+												   '("\\.json\\'" . js2-mode))
+									  (add-to-list 'auto-mode-alist 
+												   '("\\.js\\'" . js2-mode))))
 
-		(:name css-mode :after (lambda ()
-								 (add-to-list 'auto-mode-alist 
-											  '("\\.css\\'" . css-mode))
-								 (setq cssm-indent-function 
-									   #'cssm-c-style-indenter)
-								 (setq cssm-indent-level '2)))
+		(:name css-mode :after (progn ()
+									  (add-to-list 'auto-mode-alist 
+												   '("\\.css\\'" . css-mode))
+									  (setq cssm-indent-function 
+											#'cssm-c-style-indenter)
+									  (setq cssm-indent-level '2)))
 
 		(:name geben
 			   :website "http://code.google.com/p/geben-on-emacs/"
@@ -104,9 +105,9 @@
 			   :options ("xzf")
 			   :url "http://geben-on-emacs.googlecode.com/files/geben-0.26.tar.gz"
 			   :load-path (".")
-			   :after (lambda ()
-						(autoload 'geben "geben" "PHP Debugger on Emacs" t)
-						(setq dbgp-default-port 9009)))
+			   :after (progn ()
+							 (autoload 'geben "geben" "PHP Debugger on Emacs" t)
+							 (setq dbgp-default-port 9009)))
 
 		(:name yasnippet
 			   :website "https://github.com/capitaomorte/yasnippet.git"
@@ -121,27 +122,24 @@
 			   :type http
 			   :url "http://tihlde.org/~stigb/rpm-spec-mode.el"
 			   :features rpm-spec-mode)
-
-		;;		(:name psvn :after (lambda ()
-		;;							 (require 'psvn)
-		;;							 (add-hook 'svn-post-process-svn-output-hook 'svn-status-remove-control-M)))
-;;		(:name magit :after (lambda () (global-set-key (kbd "C-x C-z") 'magit-status)))
   		))
 
 (setq my-packages 
-	  (append '(emacs-w3m
+	  (append '(
 				el-get
 				csv-mode
-				ascii-table
+				;;emacs-w3m
+				;;ascii-table
 				php-mode-improved
 				puppet-mode
 				maxframe
+				nginx-mode
 				tail)
 			  (mapcar 'el-get-source-name el-get-sources)))
 
-;; (el-get 'sync my-packages)
+(el-get 'sync my-packages)
 ;; (el-get nil my-packages)
-(el-get 'wait my-packages)
+;;(el-get 'wait my-packages)
 
 
 
@@ -172,16 +170,12 @@
 							 (expand-file-name "init.el" user-emacs-dir)))))
 (global-set-key "\C-h9" 'my-toggle-fullscreen)
 
-(setq my-toggle-fullscreen-list (list 'maximize-frame 'restore-frame))
-(defun my-toggle-fullscreen (&optional f)
-  ;; TODO: add mac detection for 'mac-toggle-max-window
+(defun my-toggle-fullscreen ()
+  "Toggle full screen"
   (interactive)
-  (if (and (fboundp 'maximize-frame) (fboundp 'restore-frame))
-	  (progn (funcall (car my-toggle-fullscreen-list))
-			 (setq my-toggle-fullscreen-list 
-				   (list (car (cdr my-toggle-fullscreen-list))
-						 (car my-toggle-fullscreen-list))))))
-
+  (set-frame-parameter
+     nil 'fullscreen
+     (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
 
 
 ;;; <http://wordaligned.org/articles/ignoring-svn-directories>
@@ -292,22 +286,22 @@
   (save-excursion (mark-defun)
 				  (perltidy-region)))
 
-(if (not (eq system-type 'windows-nt))
-	(progn
-
-;;; http://www.emacswiki.org/cgi-bin/wiki/BrowseUrl
-	  (require 'w3m-load)
-	  (require 'w3m)
-	  (setq browse-url-browser-function 'browse-url-generic
-			browse-url-generic-program "/opt/google/chrome/google-chrome")
-
-	  (defun choose-browser (url &rest args)
-		(interactive "sURL: ")
-		(if (y-or-n-p "Use external browser? ")
-			(browse-url-generic url)
-		  (w3m-browse-url url)))
-
-	  (setq browse-url-browser-function 'choose-browser)))
+;;(if (not (eq system-type 'windows-nt))
+;;	(progn
+;;
+;;;;; http://www.emacswiki.org/cgi-bin/wiki/BrowseUrl
+;;	  (require 'w3m-load)
+;;	  (require 'w3m)
+;;	  (setq browse-url-browser-function 'browse-url-generic
+;;			browse-url-generic-program "/opt/google/chrome/google-chrome")
+;;
+;;	  (defun choose-browser (url &rest args)
+;;		(interactive "sURL: ")
+;;		(if (y-or-n-p "Use external browser? ")
+;;			(browse-url-generic url)
+;;		  (w3m-browse-url url)))
+;;
+;;	  (setq browse-url-browser-function 'choose-browser)))
 (global-set-key "\C-h\C-b" 'browse-url-at-point)
 
 ;;; PHP-Mode-Improved
@@ -361,11 +355,11 @@
 (server-start)
 
 ;;; Erlang emacs setup
-(setq my-erlang-emacs-dir "/opt/erlang5.9.2/lib/tools-2.6.8/emacs")
-(if (eq system-type 'windows-nt)
-	(setq my-erlang-emacs-dir "C:/opt/erlang5.9.2/lib/tools-2.6.8/emacs"))
-(add-to-list 'load-path my-erlang-emacs-dir)
-(require 'erlang-start)
-(add-hook 'erlang-mode-hook 'erlang-font-lock-level-3)
+;;(setq my-erlang-emacs-dir "/opt/erlang5.9.2/lib/tools-2.6.8/emacs")
+;;(if (eq system-type 'windows-nt)
+;;	(setq my-erlang-emacs-dir "C:/opt/erlang5.9.2/lib/tools-2.6.8/emacs"))
+;;(add-to-list 'load-path my-erlang-emacs-dir)
+;;(require 'erlang-start)
+;;(add-hook 'erlang-mode-hook 'erlang-font-lock-level-3)
 
 (require 'tail)
