@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2014-04-02 17:43:47 davidh>
+;; Time-stamp: <2014-04-17 08:35:03 davidh>
 
 ;;; Commentary:
 
@@ -128,6 +128,7 @@
 	  (append '(
 				el-get
 				csv-mode
+				magit
 				;;emacs-w3m
 				;;ascii-table
 				php-mode-improved
@@ -151,6 +152,7 @@
 (global-set-key "\C-xo" 'next-multiframe-window)
 (global-set-key "\C-xp" 'previous-multiframe-window)
 (global-set-key "\C-hh" 'help-for-help)
+(global-set-key "\C-hg" 'magit-status)
 
 (global-set-key (kbd "<f12>") 'clipboard-kill-ring-save)
 (global-set-key "\C-h\C-w"    'clipboard-kill-ring-save)
