@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2014-04-17 08:35:03 davidh>
+;; Time-stamp: <2014-05-14 13:12:19 davidh>
 
 ;;; Commentary:
 
@@ -135,6 +135,7 @@
 				puppet-mode
 				maxframe
 				nginx-mode
+				auto-complete
 				tail)
 			  (mapcar 'el-get-source-name el-get-sources)))
 
@@ -253,6 +254,22 @@
 									 filename))))))
 (defalias 'find-file-at-point 'find-file-at-point-with-line)
 
+(defun my:create-file-buffer (filename)
+  "Create a suitably named buffer for visiting FILENAME, and return it.
+FILENAME (sans directory) is used unchanged if that name is free;
+otherwise a string <2> or <3> or ... is appended to get an unused name.
+Spaces at the start of FILENAME (sans directory) are removed."
+  (let ((lastname (replace-regexp-in-string
+				   (file-name-directory 
+					(directory-file-name (file-name-directory filename))) "" filename)))
+    (if (string= lastname "")
+		(setq lastname filename))
+    (save-match-data
+      (string-match "^ *\\(.*\\)" lastname)
+      (generate-new-buffer (match-string 1 lastname)))))
+(defalias 'create-file-buffer 'my:create-file-buffer)
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Modes, etc.
 
@@ -365,3 +382,12 @@
 ;;(add-hook 'erlang-mode-hook 'erlang-font-lock-level-3)
 
 (require 'tail)
+
+;;; Auto Complete (installed by el-get)
+(require 'auto-complete)
+(require 'auto-complete-config)
+(ac-config-default)
+
+;;; Yasnippet (installed by el-get)
+(require 'yasnippet)
+(yas-global-mode 1)
