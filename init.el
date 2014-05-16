@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2014-05-14 13:12:19 davidh>
+;; Time-stamp: <2014-05-16 07:42:37 davidh>
 
 ;;; Commentary:
 
@@ -259,9 +259,10 @@
 FILENAME (sans directory) is used unchanged if that name is free;
 otherwise a string <2> or <3> or ... is appended to get an unused name.
 Spaces at the start of FILENAME (sans directory) are removed."
-  (let ((lastname (replace-regexp-in-string
-				   (file-name-directory 
-					(directory-file-name (file-name-directory filename))) "" filename)))
+  (let ((lastname (file-name-nondirectory filename)))
+;;  (let ((lastname (replace-regexp-in-string
+;;				   (file-name-directory 
+;;					(directory-file-name (file-name-directory filename))) "" filename)))
     (if (string= lastname "")
 		(setq lastname filename))
     (save-match-data
