@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2014-05-16 07:42:37 davidh>
+;; Time-stamp: <2014-05-22 09:03:59 davidh>
 
 ;;; Commentary:
 
@@ -392,3 +392,9 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;;; Yasnippet (installed by el-get)
 (require 'yasnippet)
 (yas-global-mode 1)
+
+
+;;;
+(when (eq system-type 'darwin) ;; mac specific settings
+  (setq mac-option-modifier 'super)
+  (setq mac-command-modifier 'meta))
