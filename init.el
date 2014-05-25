@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2014-05-22 09:03:59 davidh>
+;; Time-stamp: <2014-05-24 18:17:00 fatehks>
 
 ;;; Commentary:
 
@@ -73,9 +73,13 @@
 
 ;;; https://github.com/dimitri/el-get
 (add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-dir))
-(unless (require 'el-get nil t)
-  (url-retrieve "https://raw.github.com/dimitri/el-get/master/el-get-install.el" 
-				(progn (s) (goto-char (point-max)) (eval-print-last-sexp))))
+(unless (require 'el-get nil 'noerror)
+  (with-current-buffer
+      (url-retrieve-synchronously
+       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
+    (goto-char (point-max))
+    (eval-print-last-sexp)))
+
 
 ;;; local sources
 (setq el-get-sources 
