@@ -1,6 +1,6 @@
 ;; .emacs
 
-;; Time-stamp: <2014-06-13 08:23:48 davidh>
+;; Time-stamp: <2014-06-13 08:26:00 davidh>
 
 (setq user-full-name "David Hisel")
 (setq user-email-address "davidh@julep.com")
