@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2014-05-22 09:03:59 davidh>
+;; Time-stamp: <2014-06-13 08:22:15 davidh>
 
 ;;; Commentary:
 
@@ -129,7 +129,6 @@
 				el-get
 				csv-mode
 				magit
-				;;emacs-w3m
 				;;ascii-table
 				php-mode-improved
 				puppet-mode
@@ -138,6 +137,12 @@
 				auto-complete
 				tail)
 			  (mapcar 'el-get-source-name el-get-sources)))
+
+(if (not (eq system-type 'windows-nt))
+	(setq my-packages 
+		  (append '(emacs-w3m))))
+
+
 
 (el-get 'sync my-packages)
 ;; (el-get nil my-packages)
@@ -306,22 +311,22 @@ Spaces at the start of FILENAME (sans directory) are removed."
   (save-excursion (mark-defun)
 				  (perltidy-region)))
 
-;;(if (not (eq system-type 'windows-nt))
-;;	(progn
-;;
-;;;;; http://www.emacswiki.org/cgi-bin/wiki/BrowseUrl
-;;	  (require 'w3m-load)
-;;	  (require 'w3m)
-;;	  (setq browse-url-browser-function 'browse-url-generic
-;;			browse-url-generic-program "/opt/google/chrome/google-chrome")
-;;
-;;	  (defun choose-browser (url &rest args)
-;;		(interactive "sURL: ")
-;;		(if (y-or-n-p "Use external browser? ")
-;;			(browse-url-generic url)
-;;		  (w3m-browse-url url)))
-;;
-;;	  (setq browse-url-browser-function 'choose-browser)))
+(if (not (eq system-type 'windows-nt))
+	(progn
+
+;;; http://www.emacswiki.org/cgi-bin/wiki/BrowseUrl
+	  (require 'w3m-load)
+	  (require 'w3m)
+	  (setq browse-url-browser-function 'browse-url-generic
+			browse-url-generic-program "/opt/google/chrome/google-chrome")
+
+	  (defun choose-browser (url &rest args)
+		(interactive "sURL: ")
+		(if (y-or-n-p "Use external browser? ")
+			(browse-url-generic url)
+		  (w3m-browse-url url)))
+
+	  (setq browse-url-browser-function 'choose-browser)))
 (global-set-key "\C-h\C-b" 'browse-url-at-point)
 
 ;;; PHP-Mode-Improved
@@ -398,3 +403,9 @@ Spaces at the start of FILENAME (sans directory) are removed."
 (when (eq system-type 'darwin) ;; mac specific settings
   (setq mac-option-modifier 'super)
   (setq mac-command-modifier 'meta))
+
+;;; EDiff
+;; Split horizontally
+(setq ediff-split-window-function 'split-window-horizontally)
+;; keep the ediff control panel in the same frame
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)

@@ -1,12 +1,16 @@
 ;; .emacs
 
-;; Time-stamp: <2014-05-14 13:56:59 davidh>
+;; Time-stamp: <2014-06-13 08:23:48 davidh>
 
 (setq user-full-name "David Hisel")
 (setq user-email-address "davidh@julep.com")
 
 ;; Nothing usually has to be changed beyond this point
+(setq user-home-dir (getenv "HOME"))
+(setq user-emacs-dir (expand-file-name ".emacs.d" user-home-dir))
+(setq user-lisp-dir (expand-file-name "lisp" user-emacs-dir))
 
+;; Set PATH based on OS
 (cond
  ((string-equal system-type "darwin")
   (progn
@@ -26,9 +30,6 @@
 						   ";" (getenv "PATH")))))
  )
 
-(setq user-home-dir (getenv "HOME"))
-(setq user-emacs-dir (expand-file-name ".emacs.d" user-home-dir))
-(setq user-lisp-dir (expand-file-name "lisp" user-emacs-dir))
 
 (setq user-emacs-init-file (expand-file-name "init.el" user-emacs-dir))
 (load user-emacs-init-file nil t)
