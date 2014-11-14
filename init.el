@@ -1,10 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-<<<<<<< HEAD
-;; Time-stamp: <2014-06-13 08:22:15 davidh>
-=======
-;; Time-stamp: <2014-05-24 18:17:00 fatehks>
->>>>>>> 410abd330a3b925135e9829bad31d3ccea43c438
+;; Time-stamp: <2014-11-13 08:31:27 davidh>
 
 ;;; Commentary:
 
@@ -130,6 +126,25 @@
 			   :type http
 			   :url "http://tihlde.org/~stigb/rpm-spec-mode.el"
 			   :features rpm-spec-mode)
+
+		(:name jira
+			   :website "http://www.emacswiki.org/emacs/JiraMode"
+			   :description "Connect to JIRA issue tracking software"
+			   :type http
+			   :url "http://www.emacswiki.org/emacs/download/jira.el"
+			   :after (progn ()
+							 (autoload 'jira "jira" "JIRA mode" t)))
+		(:name org-jira
+			   :website "https://github.com/baohaojun/org-jira.git"
+			   :description "Use JIRA in Emacs org-mode."
+			   :type github
+			   :pkgname "baohaojun/org-jira"
+			   :features "org-jira"
+			   :compile "yasnippet.el")
+
+
+
+
   		))
 
 (setq my-packages 
@@ -143,12 +158,14 @@
 				maxframe
 				nginx-mode
 				auto-complete
+				xml-rpc-el
+				twittering-mode
 				tail)
 			  (mapcar 'el-get-source-name el-get-sources)))
 
 (if (not (eq system-type 'windows-nt))
 	(setq my-packages 
-		  (append '(emacs-w3m))))
+		  (append my-packages '(emacs-w3m))))
 
 
 
@@ -192,6 +209,18 @@
   (set-frame-parameter
      nil 'fullscreen
      (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
+
+
+(eval-when-compile (require 'cl))
+(set-frame-parameter nil 'alpha '(100 100))
+(defun toggle-transparency ()
+  (interactive)
+  (if (/=
+	   (cadr (frame-parameter nil 'alpha))
+	   100)
+	  (set-frame-parameter nil 'alpha '(100 100))
+	(set-frame-parameter nil 'alpha '(85 50))))
+(global-set-key (kbd "C-h C-t") 'toggle-transparency)
 
 
 ;;; <http://wordaligned.org/articles/ignoring-svn-directories>
@@ -325,8 +354,9 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;;; http://www.emacswiki.org/cgi-bin/wiki/BrowseUrl
 	  (require 'w3m-load)
 	  (require 'w3m)
-	  (setq browse-url-browser-function 'browse-url-generic
-			browse-url-generic-program "/opt/google/chrome/google-chrome")
+	  ;;(setq browse-url-browser-function 'browse-url-generic)
+	  (setq browse-url-browser-function 'browse-url-default-macosx-browser)
+	  ;;(setq browse-url-generic-program "/opt/google/chrome/google-chrome")
 
 	  (defun choose-browser (url &rest args)
 		(interactive "sURL: ")
@@ -335,6 +365,15 @@ Spaces at the start of FILENAME (sans directory) are removed."
 		  (w3m-browse-url url)))
 
 	  (setq browse-url-browser-function 'choose-browser)))
+
+(defun browse-url-default-macosx-browser (url &optional new-window)
+  (interactive (browse-url-interactive-arg "URL: "))
+  (if (and new-window (>= emacs-major-version 23))
+      (ns-do-applescript
+       (format (concat "tell application \"Safari\" to make document with properties {URL:\"%s\"}\n"
+		       "tell application \"Safari\" to activate") url))
+    (start-process (concat "open " url) nil "open" url)))
+
 (global-set-key "\C-h\C-b" 'browse-url-at-point)
 
 ;;; PHP-Mode-Improved
@@ -372,7 +411,42 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;;
 ;;    M-x tags-search <type your regexp>       initiate a search
 ;;    M-,                                      go to the next match
+
+
+;; Navigating using tags
+;; 
+;; Once you have a tags file and M-x visit-tags-table, you can follow
+;; tags (of functions, variables, macros, whatever) to their
+;; definitions. These are the basic commands:
+;; 
+;;     `M-.’ (‘find-tag’) – find a tag, that is, use the Tags file to
+;;          look up a definition. If there are multiple tags in the
+;;          project with the same name, use `C-u M-.’ to go to the
+;;          next match.
+;;
+;;     ‘M-x find-tag-other-window’ – selects the buffer containing the
+;;          tag’s definition in another window, and move point there.
+;;
+;;     ‘M-*’ (‘pop-tag-mark’) – jump back
+;;
+;;     ‘M-x tags-search’ – regexp-search through the source files
+;;          indexed by a tags file (a bit like ‘grep’)
+;;
+;;     ‘M-x tags-query-replace’ – query-replace through the source
+;;          files indexed by a tags file
+;;
+;;     `M-,’ (‘tags-loop-continue’) – resume ‘tags-search’ or
+;;          ‘tags-query-replace’ starting at point in a source file
+;;
+;;     ‘M-x tags-apropos’ – list all tags in a tags file that match a
+;;          regexp
+;;
+;;     ‘M-x list-tags’ – list all tags defined in a source file
+;; 
+;; See the Emacs manual, node Tags for more information: Tags.
 (setq path-to-ctags "/usr/bin/ctags")
+(if (eq system-type 'darwin)
+	(setq path-to-ctags "/opt/local/bin/ctags"))
 
 (if (eq system-type 'windows-nt)
 	(setq path-to-ctags "c:/opt/bin/ctags.exe"))
@@ -385,6 +459,7 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;;; EmacsServer  "server.el"
 ;;; Connect term via $ emacsclient -t   # exit with C-x 5 0
 ;;; Connect  gui via $ emacsclient FILE # exit with C-x #
+(setq server-socket-dir (format "/tmp/emacs%d" (user-uid)))
 (server-start)
 
 ;;; Erlang emacs setup
@@ -417,3 +492,10 @@ Spaces at the start of FILENAME (sans directory) are removed."
 (setq ediff-split-window-function 'split-window-horizontally)
 ;; keep the ediff control panel in the same frame
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+
+;;; JIRA
+;;(setq jira-url "https://julepdev.atlassian.net/rpc/xmlrpc")
+;;(require 'jira)
+
+(setq jiralib-url "https://julepdev.atlassian.net") 
+(require 'org-jira)
