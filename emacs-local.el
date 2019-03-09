@@ -1,9 +1,10 @@
 ;; .emacs
 
-;; Time-stamp: <2014-06-13 08:26:00 davidh>
+;; Time-stamp: <2019-03-08 17:16:13 dhisel>
+
 
 (setq user-full-name "David Hisel")
-(setq user-email-address "david@electronic-artisans.com")
+(setq user-email-address "David.Hisel1@T-Mobile.com")
 
 ;; Nothing usually has to be changed beyond this point
 (setq user-home-dir (getenv "HOME"))
