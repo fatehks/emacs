@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2019-03-08 17:19:59 dhisel>
+;; Time-stamp: <2019-03-08 17:54:00 dhisel>
 
 ;;; Commentary:
 
@@ -24,6 +24,9 @@
 ;; ;; Custom Settings
 ;; (setq custom-file (expand-file-name "custom.el" user-emacs-dir))
 ;; (load custom-file t t)
+
+;;; REFERENCES
+;;  Some cool Emacs packages to consider https://github.com/emacs-tw/awesome-emacs
 
 ;;; EXTERNAL DEPENDENCIES
 ;; bzr -- dnf install bzr
@@ -256,6 +259,17 @@ Spaces at the start of FILENAME (sans directory) are removed."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Modes, etc.
+
+;;; https://www.emacswiki.org/emacs/Desktop
+(require 'desktop)
+(desktop-save-mode 1)
+(defun my-desktop-save ()
+  (interactive)
+  ;; Don't call desktop-save-in-desktop-dir, as it prints a message.
+  (if (eq (desktop-owner) (emacs-pid))
+      (desktop-save desktop-dirname)))
+(add-hook 'auto-save-hook 'my-desktop-save)
+
 
 
 ;;; CPerl <http://www.emacswiki.org/cgi-bin/wiki/CPerlMode>
