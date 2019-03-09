@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2014-11-13 08:31:27 davidh>
+;; Time-stamp: <2019-03-08 17:19:59 dhisel>
 
 ;;; Commentary:
 
@@ -25,6 +25,16 @@
 ;; (setq custom-file (expand-file-name "custom.el" user-emacs-dir))
 ;; (load custom-file t t)
 
+;;; EXTERNAL DEPENDENCIES
+;; bzr -- dnf install bzr
+;; cvs -- dnf install git-cvs # or just cvs
+;; autoconf -- dnf install autoconf
+;; makeinfo -- dnf install texinfo
+;; w3m -- dnf install w3m w3m-img
+;;
+;; Install deps on Fedora 29:
+;;     $ sudo dnf install bzr git-cvs autoconf texinfo w3m w3m-img
+
 ;;; Code:
 
 (require 'cl)
@@ -44,7 +54,7 @@
 (put 'erase-buffer 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
 (add-hook 'before-save-hook 'time-stamp) ; time-stamp.el
-(iswitchb-mode 1)
+;;(iswitchb-mode 1)
 
 ;;; Appearance
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
@@ -71,108 +81,31 @@
 ;;(set-face-foreground 'modeline "white")
 
 
-;;; https://github.com/dimitri/el-get
-(add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-dir))
-(unless (require 'el-get nil 'noerror)
-  (with-current-buffer
-      (url-retrieve-synchronously
-       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
-    (goto-char (point-max))
-    (eval-print-last-sexp)))
+;;; Melpa
+(require 'package)
+(add-to-list 'package-archives
+	     '("melpa" . "http://melpa.org/packages/") t)
+;; TODO: add a guard so that refresh happens no more than once every 24h
+(package-refresh-contents nil)
+(package-initialize)
 
-
-;;; local sources
-(setq el-get-sources 
-      '((:name buffer-move :after (progn () 
-										 (global-set-key "\C-h\C-h" 'buf-move-left)
-										 (global-set-key "\C-h\C-j" 'buf-move-down)
-										 (global-set-key "\C-h\C-k" 'buf-move-up)
-										 (global-set-key "\C-h\C-l" 'buf-move-right)))
-
-		(:name js2-mode :after (progn ()
-									  (add-to-list 'auto-mode-alist 
-												   '("\\.json\\'" . js2-mode))
-									  (add-to-list 'auto-mode-alist 
-												   '("\\.js\\'" . js2-mode))))
-
-		(:name css-mode :after (progn ()
-									  (add-to-list 'auto-mode-alist 
-												   '("\\.css\\'" . css-mode))
-									  (setq cssm-indent-function 
-											#'cssm-c-style-indenter)
-									  (setq cssm-indent-level '2)))
-
-		(:name geben
-			   :website "http://code.google.com/p/geben-on-emacs/"
-			   :description "DBGp protocol frontend, a script debugger"
-			   :type http-tar
-			   :options ("xzf")
-			   :url "http://geben-on-emacs.googlecode.com/files/geben-0.26.tar.gz"
-			   :load-path (".")
-			   :after (progn ()
-							 (autoload 'geben "geben" "PHP Debugger on Emacs" t)
-							 (setq dbgp-default-port 9009)))
-
-		(:name yasnippet
-			   :website "https://github.com/capitaomorte/yasnippet.git"
-			   :description "YASnippet is a template system for Emacs."
-			   :type github
-			   :pkgname "capitaomorte/yasnippet"
-			   :features "yasnippet"
-			   :compile "yasnippet.el")
-
-		(:name rpm-spec-mode
-			   :description "RPM spec file mode"
-			   :type http
-			   :url "http://tihlde.org/~stigb/rpm-spec-mode.el"
-			   :features rpm-spec-mode)
-
-		(:name jira
-			   :website "http://www.emacswiki.org/emacs/JiraMode"
-			   :description "Connect to JIRA issue tracking software"
-			   :type http
-			   :url "http://www.emacswiki.org/emacs/download/jira.el"
-			   :after (progn ()
-							 (autoload 'jira "jira" "JIRA mode" t)))
-		(:name org-jira
-			   :website "https://github.com/baohaojun/org-jira.git"
-			   :description "Use JIRA in Emacs org-mode."
-			   :type github
-			   :pkgname "baohaojun/org-jira"
-			   :features "org-jira"
-			   :compile "yasnippet.el")
-
-
-
-
-  		))
-
-(setq my-packages 
-	  (append '(
-				el-get
-				csv-mode
-				magit
-				;;ascii-table
-				php-mode-improved
-				puppet-mode
-				maxframe
-				nginx-mode
-				auto-complete
-				xml-rpc-el
-				twittering-mode
-				tail)
-			  (mapcar 'el-get-source-name el-get-sources)))
-
-(if (not (eq system-type 'windows-nt))
-	(setq my-packages 
-		  (append my-packages '(emacs-w3m))))
-
-
-
-(el-get 'sync my-packages)
-;; (el-get nil my-packages)
-;;(el-get 'wait my-packages)
-
+;; To list packages M-x list-packages RET
+;; Install packages from Melpa
+(package-install 'yasnippet)
+(package-install 'magit)
+(package-install 'geben)
+(package-install 'csv-mode)
+(package-install 'puppet-mode)
+(package-install 'nginx-mode)
+(package-install 'auto-complete)
+(package-install 'twittering-mode)
+(package-install 'maxframe)
+(package-install 'php-mode)
+(package-install 'xml-rpc)
+(package-install 'w3m)
+(package-install 'fixmee)
+(package-install 'buffer-move)
+(package-install 'js2-mode)
 
 
 ;;; Zone Out
@@ -197,18 +130,26 @@
 
 (global-set-key "\C-h7" 'sql-send-region)
 (global-set-key "\C-h8" '(lambda ()
-						   (interactive)
-						   (switch-to-buffer 
-							(find-file-noselect
-							 (expand-file-name "init.el" user-emacs-dir)))))
+			   (interactive)
+			   (switch-to-buffer 
+			    (find-file-noselect
+			     (expand-file-name "init.el" user-emacs-dir)))))
+
+(require 'buffer-move)
+(global-set-key "\C-h\C-h" 'buf-move-left)
+(global-set-key "\C-h\C-j" 'buf-move-down)
+(global-set-key "\C-h\C-k" 'buf-move-up)
+(global-set-key "\C-h\C-l" 'buf-move-right)
+
+
 (global-set-key "\C-h9" 'my-toggle-fullscreen)
 
 (defun my-toggle-fullscreen ()
   "Toggle full screen"
   (interactive)
   (set-frame-parameter
-     nil 'fullscreen
-     (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
+   nil 'fullscreen
+   (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
 
 
 (eval-when-compile (require 'cl))
@@ -216,10 +157,10 @@
 (defun toggle-transparency ()
   (interactive)
   (if (/=
-	   (cadr (frame-parameter nil 'alpha))
-	   100)
-	  (set-frame-parameter nil 'alpha '(100 100))
-	(set-frame-parameter nil 'alpha '(85 50))))
+       (cadr (frame-parameter nil 'alpha))
+       100)
+      (set-frame-parameter nil 'alpha '(100 100))
+    (set-frame-parameter nil 'alpha '(85 50))))
 (global-set-key (kbd "C-h C-t") 'toggle-transparency)
 
 
@@ -262,38 +203,38 @@
   "Opens file at point and moves point to line specified next to file name."
   (interactive)
   (let* ((filename (or filename (ffap-prompter)))
-		 (line-number
-		  (and (or (looking-at ".* line \\(\[0-9\]+\\)")
-				   (looking-at ".*:\\(\[0-9\]+\\):?"))
-			   (string-to-number (match-string-no-properties 1)))))
+	 (line-number
+	  (and (or (looking-at ".* line \\(\[0-9\]+\\)")
+		   (looking-at ".*:\\(\[0-9\]+\\):?"))
+	       (string-to-number (match-string-no-properties 1)))))
     (message "%s --> %s" filename line-number)
     (cond ((ffap-url-p filename)
-		   (let (current-prefix-arg)
-			 (funcall ffap-url-fetcher filename)))
-		  ((and line-number
-				(file-exists-p filename))
-		   (progn (find-file-other-window filename)
-				  (goto-line line-number)))
-		  ((and ffap-pass-wildcards-to-dired
-				ffap-dired-wildcards
-				(string-match ffap-dired-wildcards filename))
-		   (funcall ffap-directory-finder filename))
-		  ((and ffap-dired-wildcards
-				(string-match ffap-dired-wildcards filename)
-				find-file-wildcards
-				;; Check if it's find-file that supports wildcards arg
-				(memq ffap-file-finder '(find-file find-alternate-file)))
-		   (funcall ffap-file-finder (expand-file-name filename) t))
-		  ((or (not ffap-newfile-prompt)
-			   (file-exists-p filename)
-			   (y-or-n-p "File does not exist, create buffer? "))
-		   (funcall ffap-file-finder
-					;; expand-file-name fixes "~/~/.emacs" bug sent by CHUCKR.
-					(expand-file-name filename)))
-		  ;; User does not want to find a non-existent file:
-		  ((signal 'file-error (list "Opening file buffer"
-									 "no such file or directory"
-									 filename))))))
+	   (let (current-prefix-arg)
+	     (funcall ffap-url-fetcher filename)))
+	  ((and line-number
+		(file-exists-p filename))
+	   (progn (find-file-other-window filename)
+		  (goto-line line-number)))
+	  ((and ffap-pass-wildcards-to-dired
+		ffap-dired-wildcards
+		(string-match ffap-dired-wildcards filename))
+	   (funcall ffap-directory-finder filename))
+	  ((and ffap-dired-wildcards
+		(string-match ffap-dired-wildcards filename)
+		find-file-wildcards
+		;; Check if it's find-file that supports wildcards arg
+		(memq ffap-file-finder '(find-file find-alternate-file)))
+	   (funcall ffap-file-finder (expand-file-name filename) t))
+	  ((or (not ffap-newfile-prompt)
+	       (file-exists-p filename)
+	       (y-or-n-p "File does not exist, create buffer? "))
+	   (funcall ffap-file-finder
+		    ;; expand-file-name fixes "~/~/.emacs" bug sent by CHUCKR.
+		    (expand-file-name filename)))
+	  ;; User does not want to find a non-existent file:
+	  ((signal 'file-error (list "Opening file buffer"
+				     "no such file or directory"
+				     filename))))))
 (defalias 'find-file-at-point 'find-file-at-point-with-line)
 
 (defun my:create-file-buffer (filename)
@@ -302,11 +243,11 @@ FILENAME (sans directory) is used unchanged if that name is free;
 otherwise a string <2> or <3> or ... is appended to get an unused name.
 Spaces at the start of FILENAME (sans directory) are removed."
   (let ((lastname (file-name-nondirectory filename)))
-;;  (let ((lastname (replace-regexp-in-string
-;;				   (file-name-directory 
-;;					(directory-file-name (file-name-directory filename))) "" filename)))
+    ;;  (let ((lastname (replace-regexp-in-string
+    ;;				   (file-name-directory 
+    ;;					(directory-file-name (file-name-directory filename))) "" filename)))
     (if (string= lastname "")
-		(setq lastname filename))
+	(setq lastname filename))
     (save-match-data
       (string-match "^ *\\(.*\\)" lastname)
       (generate-new-buffer (match-string 1 lastname)))))
@@ -316,6 +257,7 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Modes, etc.
 
+
 ;;; CPerl <http://www.emacswiki.org/cgi-bin/wiki/CPerlMode>
 (require 'cperl-mode)
 (defalias 'perl-mode 'cperl-mode)
@@ -324,7 +266,7 @@ Spaces at the start of FILENAME (sans directory) are removed."
       cperl-continued-statement-offset 0
       cperl-indent-level 4
       cperl-indent-parens-as-block t
-	  cperl-hook-after-change nil ;; fixes POD highlight issue
+      cperl-hook-after-change nil ;; fixes POD highlight issue
       cperl-tabs-always-indent t)
 
 (defun my-cperl-eldoc-documentation-function ()
@@ -333,9 +275,9 @@ Spaces at the start of FILENAME (sans directory) are removed."
    (let ((cperl-message-on-help-error nil))
      (cperl-get-help))))
 (add-hook 'cperl-mode-hook
-		  (lambda ()
-			(set (make-local-variable 'eldoc-documentation-function)
-				 'my-cperl-eldoc-documentation-function)))
+	  (lambda ()
+	    (set (make-local-variable 'eldoc-documentation-function)
+		 'my-cperl-eldoc-documentation-function)))
 
 (defun perltidy-region ()
   "Run perltidy on the current region."
@@ -346,25 +288,25 @@ Spaces at the start of FILENAME (sans directory) are removed."
   "Run perltidy on the current defun."
   (interactive)
   (save-excursion (mark-defun)
-				  (perltidy-region)))
+		  (perltidy-region)))
 
 (if (not (eq system-type 'windows-nt))
-	(progn
+    (progn
 
 ;;; http://www.emacswiki.org/cgi-bin/wiki/BrowseUrl
-	  (require 'w3m-load)
-	  (require 'w3m)
-	  ;;(setq browse-url-browser-function 'browse-url-generic)
-	  (setq browse-url-browser-function 'browse-url-default-macosx-browser)
-	  ;;(setq browse-url-generic-program "/opt/google/chrome/google-chrome")
+      ;;(require 'w3m-load)
+      (require 'w3m)
+      ;;(setq browse-url-browser-function 'browse-url-generic)
+      (setq browse-url-browser-function 'browse-url-default-macosx-browser)
+      ;;(setq browse-url-generic-program "/opt/google/chrome/google-chrome")
 
-	  (defun choose-browser (url &rest args)
-		(interactive "sURL: ")
-		(if (y-or-n-p "Use external browser? ")
-			(browse-url-generic url)
-		  (w3m-browse-url url)))
+      (defun choose-browser (url &rest args)
+	(interactive "sURL: ")
+	(if (y-or-n-p "Use external browser? ")
+	    (browse-url-generic url)
+	  (w3m-browse-url url)))
 
-	  (setq browse-url-browser-function 'choose-browser)))
+      (setq browse-url-browser-function 'choose-browser)))
 
 (defun browse-url-default-macosx-browser (url &optional new-window)
   (interactive (browse-url-interactive-arg "URL: "))
@@ -376,14 +318,12 @@ Spaces at the start of FILENAME (sans directory) are removed."
 
 (global-set-key "\C-h\C-b" 'browse-url-at-point)
 
-;;; PHP-Mode-Improved
-;;; http://emacswiki.org/emacs/php-mode-improved.el
-;;; (fetched by el-get)
+;;; PHP-Mode
 (require 'php-mode)
 (add-hook 'php-mode-hook 'turn-on-font-lock)
 
 ;;; ASCII table
-(autoload 'ascii-table "ascii-table" nil t)
+;;(autoload 'ascii-table "ascii-table" nil t)
 
 
 ;;; Tramp
@@ -398,12 +338,13 @@ Spaces at the start of FILENAME (sans directory) are removed."
   "Function helper for sql-mysql, if prefixed, to specify a port."
   (interactive "P")
   (let ((sql-mysql-options
-		 (append sql-mysql-options 
-				 (if port-p
-					 (list (concat "--port=" (read-string "Port: ")))))))
+	 (append sql-mysql-options 
+		 (if port-p
+		     (list (concat "--port=" (read-string "Port: ")))))))
     (call-interactively 'sql-mysql)))
 
-;; ctags -- http://www.emacswiki.org/emacs/BuildTags
+;; CTags
+;; http://www.emacswiki.org/emacs/BuildTags
 ;; Usage:
 ;;    M-.       goes to the symbol definition
 ;;    M-0 M-.   goes to the next matching definition
@@ -411,8 +352,7 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;;
 ;;    M-x tags-search <type your regexp>       initiate a search
 ;;    M-,                                      go to the next match
-
-
+;;
 ;; Navigating using tags
 ;; 
 ;; Once you have a tags file and M-x visit-tags-table, you can follow
@@ -446,10 +386,10 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;; See the Emacs manual, node Tags for more information: Tags.
 (setq path-to-ctags "/usr/bin/ctags")
 (if (eq system-type 'darwin)
-	(setq path-to-ctags "/opt/local/bin/ctags"))
+    (setq path-to-ctags "/opt/local/bin/ctags"))
 
 (if (eq system-type 'windows-nt)
-	(setq path-to-ctags "c:/opt/bin/ctags.exe"))
+    (setq path-to-ctags "c:/opt/bin/ctags.exe"))
 (defun create-tags (dir-name)
   "Create tags file."
   (interactive "DDirectory: ")
@@ -462,27 +402,18 @@ Spaces at the start of FILENAME (sans directory) are removed."
 (setq server-socket-dir (format "/tmp/emacs%d" (user-uid)))
 (server-start)
 
-;;; Erlang emacs setup
-;;(setq my-erlang-emacs-dir "/opt/erlang5.9.2/lib/tools-2.6.8/emacs")
-;;(if (eq system-type 'windows-nt)
-;;	(setq my-erlang-emacs-dir "C:/opt/erlang5.9.2/lib/tools-2.6.8/emacs"))
-;;(add-to-list 'load-path my-erlang-emacs-dir)
-;;(require 'erlang-start)
-;;(add-hook 'erlang-mode-hook 'erlang-font-lock-level-3)
 
-(require 'tail)
-
-;;; Auto Complete (installed by el-get)
+;;; Auto Complete
 (require 'auto-complete)
 (require 'auto-complete-config)
 (ac-config-default)
 
-;;; Yasnippet (installed by el-get)
+;;; Yasnippet
 (require 'yasnippet)
 (yas-global-mode 1)
 
 
-;;;
+;;; Mac OS X
 (when (eq system-type 'darwin) ;; mac specific settings
   (setq mac-option-modifier 'super)
   (setq mac-command-modifier 'meta))
@@ -493,9 +424,7 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;; keep the ediff control panel in the same frame
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
-;;; JIRA
-;;(setq jira-url "https://julepdev.atlassian.net/rpc/xmlrpc")
-;;(require 'jira)
-
-(setq jiralib-url "https://julepdev.atlassian.net") 
-(require 'org-jira)
+;;; JS Mode
+(require 'js2-mode)
+(add-to-list 'auto-mode-alist '("\\.json\\'" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
