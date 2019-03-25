@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2019-03-08 17:54:00 dhisel>
+;; Time-stamp: <2019-03-25 16:10:16 dhisel>
 
 ;;; Commentary:
 
@@ -48,6 +48,9 @@
 ;; (setq initial-buffer-choice (expand-file-name "work" user-home-dir))
 (setq initial-buffer-choice nil)
 
+;;;
+(setenv "PAGER" "cat")
+
 ;;; Behaviour
 (setq inhibit-startup-message t)
 (setq default-tab-width 4)
@@ -88,8 +91,9 @@
 (require 'package)
 (add-to-list 'package-archives
 	     '("melpa" . "http://melpa.org/packages/") t)
-;; TODO: add a guard so that refresh happens no more than once every 24h
-(package-refresh-contents nil)
+
+(when (not package-archive-contents)
+    (package-refresh-contents t))
 (package-initialize)
 
 ;; To list packages M-x list-packages RET
@@ -109,6 +113,14 @@
 (package-install 'fixmee)
 (package-install 'buffer-move)
 (package-install 'js2-mode)
+(package-install 'go-mode)
+(package-install 'markdown-mode)
+(package-install 'edit-indirect)
+(package-install 'yaml-mode)
+;(package-install 'neotree)
+;(package-install 'treemacs)
+;(package-install 'treemacs-magit)
+(package-install 'dired-sidebar)
 
 
 ;;; Zone Out
@@ -131,12 +143,19 @@
 (global-set-key "\C-h\C-p" 'cperl-perldoc)
 
 
+(global-set-key "\C-h6" 'my-insert-date)
+(global-set-key "\C-h^" 'my-insert-timestamp)
 (global-set-key "\C-h7" 'sql-send-region)
 (global-set-key "\C-h8" '(lambda ()
 			   (interactive)
 			   (switch-to-buffer 
 			    (find-file-noselect
 			     (expand-file-name "init.el" user-emacs-dir)))))
+(global-set-key (kbd "C-h C-8") '(lambda ()
+			   (interactive)
+			   (switch-to-buffer 
+			    (find-file-noselect
+			     (expand-file-name "links.org" user-org-directory)))))
 
 (require 'buffer-move)
 (global-set-key "\C-h\C-h" 'buf-move-left)
@@ -260,6 +279,25 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Modes, etc.
 
+;;; Org mode
+;;(setq org-directory (expand-file-name (concat user-home-dir "/Documents/org")))
+
+;;;https://orgmode.org/manual/Capture.html#Capture
+;;(global-set-key (kbd "C-c l") 'org-store-link)
+;;(global-set-key (kbd "C-c a") 'org-agenda)
+;;(global-set-key (kbd "C-c c") 'org-capture)
+;;(setq org-capture-templates
+;;      '(
+;;	("t" "Todo" entry (file+headline (concat user-org-directory "/gtd.org") "Tasks")
+;;         "* TODO %?\n  %i\n  %a")
+;;        ("j" "Journal" entry (file+datetree (concat user-org-directory "/journal.org"))
+;;         "* %?\nEntered on %U\n  %i\n  %a")
+;;	("l" "Link" entry (file (concat user-org-directory "/links.org"))
+;;         "* Link %?\n  %i\n  %a")
+;;	("e" "Error" entry (file (concat user-org-directory "/errors.org"))
+;;         "* Error %?\n  %i\n  %a")
+;;	))
+
 ;;; https://www.emacswiki.org/emacs/Desktop
 (require 'desktop)
 (desktop-save-mode 1)
@@ -311,8 +349,8 @@ Spaces at the start of FILENAME (sans directory) are removed."
       ;;(require 'w3m-load)
       (require 'w3m)
       ;;(setq browse-url-browser-function 'browse-url-generic)
-      (setq browse-url-browser-function 'browse-url-default-macosx-browser)
-      ;;(setq browse-url-generic-program "/opt/google/chrome/google-chrome")
+      ;;(setq browse-url-browser-function 'browse-url-default-macosx-browser)
+      (setq browse-url-generic-program "/opt/google/chrome/chrome")
 
       (defun choose-browser (url &rest args)
 	(interactive "sURL: ")
@@ -442,3 +480,21 @@ Spaces at the start of FILENAME (sans directory) are removed."
 (require 'js2-mode)
 (add-to-list 'auto-mode-alist '("\\.json\\'" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+
+
+;;; Date and Time-stamp
+(defun my-insert-date ()
+  (interactive)
+  (insert (format-time-string "%Y-%m-%d")))
+(defun my-insert-timestamp ()
+  (interactive)
+  (insert (format-time-string "%Y-%m-%dT%H:%M:%S")))
+
+;;; Markdown-mode
+(require 'markdown-mode)
+;; To install on fedora: sudo dnf install perl-Text-MultiMarkdown
+(setq markdown-command "/usr/bin/MultiMarkdown.pl")
+
+;;; dired-sidebar
+(require 'dired-sidebar)
+(global-set-key "\C-h\C-s" 'dired-sidebar-toggle-sidebar)

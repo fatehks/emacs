@@ -1,6 +1,6 @@
 ;; .emacs
 
-;; Time-stamp: <2019-03-08 17:16:13 dhisel>
+;; Time-stamp: <2019-03-14 10:05:23 dhisel>
 
 
 (setq user-full-name "David Hisel")
@@ -10,6 +10,10 @@
 (setq user-home-dir (getenv "HOME"))
 (setq user-emacs-dir (expand-file-name ".emacs.d" user-home-dir))
 (setq user-lisp-dir (expand-file-name "lisp" user-emacs-dir))
+
+;; Set this if want to change the default destination where you store Org-mode docs
+(setq user-org-directory (expand-file-name (concat user-home-dir "/Documents/org")))
+
 
 ;; Set PATH based on OS
 (cond
