@@ -1,6 +1,6 @@
 ;; .emacs
 
-;; Time-stamp: <2019-03-14 10:05:23 dhisel>
+;; Time-stamp: <2019-03-25 17:03:00 dhisel>
 
 
 (setq user-full-name "David Hisel")
@@ -8,6 +8,7 @@
 
 ;; Nothing usually has to be changed beyond this point
 (setq user-home-dir (getenv "HOME"))
+(setq user-documents-dir (expand-file-name "Documents" user-home-dir))
 (setq user-emacs-dir (expand-file-name ".emacs.d" user-home-dir))
 (setq user-lisp-dir (expand-file-name "lisp" user-emacs-dir))
 

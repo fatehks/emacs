@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2019-03-25 16:10:16 dhisel>
+;; Time-stamp: <2019-03-25 17:11:40 dhisel>
 
 ;;; Commentary:
 
@@ -143,15 +143,20 @@
 (global-set-key "\C-h\C-p" 'cperl-perldoc)
 
 
-(global-set-key "\C-h6" 'my-insert-date)
-(global-set-key "\C-h^" 'my-insert-timestamp)
+(global-set-key "\C-h6" 'my:insert-date)
+(global-set-key "\C-h^" 'my:insert-timestamp)
 (global-set-key "\C-h7" 'sql-send-region)
 (global-set-key "\C-h8" '(lambda ()
 			   (interactive)
 			   (switch-to-buffer 
 			    (find-file-noselect
 			     (expand-file-name "init.el" user-emacs-dir)))))
-(global-set-key (kbd "C-h C-8") '(lambda ()
+(global-set-key (kbd "C-h C-n") '(lambda ()
+			   (interactive)
+			   (switch-to-buffer
+			    (find-file-noselect
+			     (expand-file-name "Notes.txt" user-documents-dir)))))
+(global-set-key (kbd "C-h C-b") '(lambda ()
 			   (interactive)
 			   (switch-to-buffer 
 			    (find-file-noselect
@@ -164,9 +169,9 @@
 (global-set-key "\C-h\C-l" 'buf-move-right)
 
 
-(global-set-key "\C-h9" 'my-toggle-fullscreen)
+(global-set-key "\C-h9" 'my:toggle-fullscreen)
 
-(defun my-toggle-fullscreen ()
+(defun my:toggle-fullscreen ()
   "Toggle full screen"
   (interactive)
   (set-frame-parameter
@@ -207,8 +212,8 @@
 
 ;;; Retrieve and eval ELisp files from the web
 ;;; Example:
-;;;   (url-retrieve "http://localhost/emacs.el" 'my-eval-url-callback)
-(defun my-eval-url-callback ()
+;;;   (url-retrieve "http://localhost/emacs.el" 'my:eval-url-callback)
+(defun my:eval-url-callback ()
   (goto-char (point-min))
   (re-search-forward "^\r?$" nil 1)
   (delete-region (point-min) (point))
@@ -301,12 +306,12 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;;; https://www.emacswiki.org/emacs/Desktop
 (require 'desktop)
 (desktop-save-mode 1)
-(defun my-desktop-save ()
+(defun my:desktop-save ()
   (interactive)
   ;; Don't call desktop-save-in-desktop-dir, as it prints a message.
   (if (eq (desktop-owner) (emacs-pid))
       (desktop-save desktop-dirname)))
-(add-hook 'auto-save-hook 'my-desktop-save)
+(add-hook 'auto-save-hook 'my:desktop-save)
 
 
 
@@ -321,7 +326,7 @@ Spaces at the start of FILENAME (sans directory) are removed."
       cperl-hook-after-change nil ;; fixes POD highlight issue
       cperl-tabs-always-indent t)
 
-(defun my-cperl-eldoc-documentation-function ()
+(defun my:cperl-eldoc-documentation-function ()
   "Return meaningful doc string for `eldoc-mode'."
   (car
    (let ((cperl-message-on-help-error nil))
@@ -329,7 +334,7 @@ Spaces at the start of FILENAME (sans directory) are removed."
 (add-hook 'cperl-mode-hook
 	  (lambda ()
 	    (set (make-local-variable 'eldoc-documentation-function)
-		 'my-cperl-eldoc-documentation-function)))
+		 'my:cperl-eldoc-documentation-function)))
 
 (defun perltidy-region ()
   "Run perltidy on the current region."
@@ -483,10 +488,10 @@ Spaces at the start of FILENAME (sans directory) are removed."
 
 
 ;;; Date and Time-stamp
-(defun my-insert-date ()
+(defun my:insert-date ()
   (interactive)
   (insert (format-time-string "%Y-%m-%d")))
-(defun my-insert-timestamp ()
+(defun my:insert-timestamp ()
   (interactive)
   (insert (format-time-string "%Y-%m-%dT%H:%M:%S")))
 
@@ -498,3 +503,17 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;;; dired-sidebar
 (require 'dired-sidebar)
 (global-set-key "\C-h\C-s" 'dired-sidebar-toggle-sidebar)
+
+(defun my:dired-sidebar-find-file-alt ()
+  "Show file in other buffer and keep focus in dired-sidebar."
+  (interactive)
+  (let ((dired-file-name (dired-get-file-for-visit)))
+    (if (and (file-directory-p dired-file-name)
+             ;; For "." open a full-blown dired buffer, since the directory is
+             ;; already open in the sidebar.
+             (not (string= (file-name-nondirectory dired-file-name) ".")))
+      (switch-to-buffer (dired-sidebar-buffer))
+      (display-buffer (find-file-noselect dired-file-name) t)
+      (when dired-sidebar-close-sidebar-on-file-open
+        (dired-sidebar-hide-sidebar)))))
+(defalias 'dired-sidebar-find-file-alt 'my:dired-sidebar-find-file-alt)
