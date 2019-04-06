@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2019-03-25 17:11:40 dhisel>
+;; Time-stamp: <2019-04-05 18:00:28 dhisel>
 
 ;;; Commentary:
 
@@ -156,11 +156,13 @@
 			   (switch-to-buffer
 			    (find-file-noselect
 			     (expand-file-name "Notes.txt" user-documents-dir)))))
-(global-set-key (kbd "C-h C-b") '(lambda ()
+(global-set-key (kbd "C-h C-/") '(lambda ()
 			   (interactive)
 			   (switch-to-buffer 
 			    (find-file-noselect
 			     (expand-file-name "links.org" user-org-directory)))))
+
+(global-set-key (kbd "C-h C-b") 'browse-url-at-point)
 
 (require 'buffer-move)
 (global-set-key "\C-h\C-h" 'buf-move-left)
@@ -187,7 +189,7 @@
        (cadr (frame-parameter nil 'alpha))
        100)
       (set-frame-parameter nil 'alpha '(100 100))
-    (set-frame-parameter nil 'alpha '(85 50))))
+    (set-frame-parameter nil 'alpha '(70 50))))
 (global-set-key (kbd "C-h C-t") 'toggle-transparency)
 
 
@@ -373,7 +375,6 @@ Spaces at the start of FILENAME (sans directory) are removed."
 		       "tell application \"Safari\" to activate") url))
     (start-process (concat "open " url) nil "open" url)))
 
-(global-set-key "\C-h\C-b" 'browse-url-at-point)
 
 ;;; PHP-Mode
 (require 'php-mode)
