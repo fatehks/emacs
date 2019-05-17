@@ -1,31 +1,15 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2019-04-05 18:00:28 dhisel>
+;; Time-stamp: <2019-05-17 08:23:26 fatehks>
 
 ;;; Commentary:
 
-;; I usually create a file, ~/.emacs.d/emacs-local.el, and then
-;; symlink ~/.emacs to that.  This way, I can keep it under version
-;; control in one dir.
-;;
-;; Contents of ~/.emacs symlinked to ~/.emacs.d/emacs-local.el
-;;
-;; (setq user-full-name "John Doe")
-;; (setq user-email-address "johndoe@example.com")
-;; 
-;; ;; Nothing usually has to be changed beyond this point
-;; (setq user-home-dir (getenv "HOME"))
-;; (setq user-emacs-dir (expand-file-name ".emacs.d" user-home-dir))
-;; (setq user-lisp-dir (expand-file-name "lisp" user-emacs-dir))
-;; 
-;; (setq user-emacs-init-file (expand-file-name "init.el" user-emacs-dir))
-;; (load user-emacs-init-file nil t)
-;; 
-;; ;; Custom Settings
-;; (setq custom-file (expand-file-name "custom.el" user-emacs-dir))
-;; (load custom-file t t)
+;; Change these variables
 
-;;; REFERENCES
+(setq user-full-name "David Hisel")
+(setq user-mail-address "David.Hisel1@T-Mobile.com")
+
+;;; References:
 ;;  Some cool Emacs packages to consider https://github.com/emacs-tw/awesome-emacs
 
 ;;; EXTERNAL DEPENDENCIES
@@ -40,12 +24,19 @@
 
 ;;; Code:
 
+(setq user-documents-dir (expand-file-name "Documents" (getenv "HOME")))
+
+;; Default destination where you store Org-mode docs
+(setq user-org-directory (expand-file-name "org" user-documents-dir))
+
+
+
 (require 'cl)
-(add-to-list 'load-path user-lisp-dir)
+(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory)) ; user lisp dir
 
 ;;; Startup
 (setq initial-scratch-buffer nil)
-;; (setq initial-buffer-choice (expand-file-name "work" user-home-dir))
+;; (setq initial-buffer-choice (expand-file-name "work" (getenv "HOME")))
 (setq initial-buffer-choice nil)
 
 ;;;
@@ -100,13 +91,11 @@
 ;; Install packages from Melpa
 (package-install 'yasnippet)
 (package-install 'magit)
-(package-install 'geben)
 (package-install 'csv-mode)
 (package-install 'puppet-mode)
 (package-install 'nginx-mode)
 (package-install 'auto-complete)
-(package-install 'twittering-mode)
-(package-install 'maxframe)
+(package-install 'geben)
 (package-install 'php-mode)
 (package-install 'xml-rpc)
 (package-install 'w3m)
@@ -117,10 +106,17 @@
 (package-install 'markdown-mode)
 (package-install 'edit-indirect)
 (package-install 'yaml-mode)
+(package-install 'dired-sidebar)
+(package-install 'ansible)
+(package-install 'ansible-doc)
+(package-install 'ansible-vault)
+
+;; not used, but might be used in the future
+;(package-install 'twittering-mode)
+;(package-install 'maxframe)
 ;(package-install 'neotree)
 ;(package-install 'treemacs)
 ;(package-install 'treemacs-magit)
-(package-install 'dired-sidebar)
 
 
 ;;; Zone Out
@@ -150,7 +146,7 @@
 			   (interactive)
 			   (switch-to-buffer 
 			    (find-file-noselect
-			     (expand-file-name "init.el" user-emacs-dir)))))
+			     (expand-file-name "init.el" user-emacs-directory)))))
 (global-set-key (kbd "C-h C-n") '(lambda ()
 			   (interactive)
 			   (switch-to-buffer
@@ -173,13 +169,12 @@
 
 (global-set-key "\C-h9" 'my:toggle-fullscreen)
 
-(defun my:toggle-fullscreen ()
-  "Toggle full screen"
-  (interactive)
-  (set-frame-parameter
-   nil 'fullscreen
-   (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
-
+ (defun my:toggle-fullscreen ()
+   "Toggle full screen"
+   (interactive)
+   (set-frame-parameter
+    nil 'fullscreen
+    (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
 
 (eval-when-compile (require 'cl))
 (set-frame-parameter nil 'alpha '(100 100))
@@ -287,7 +282,7 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;;; Modes, etc.
 
 ;;; Org mode
-;;(setq org-directory (expand-file-name (concat user-home-dir "/Documents/org")))
+;;(setq org-directory (expand-file-name (concat (getenv "HOME") "/Documents/org")))
 
 ;;;https://orgmode.org/manual/Capture.html#Capture
 ;;(global-set-key (kbd "C-c l") 'org-store-link)
@@ -518,3 +513,17 @@ Spaces at the start of FILENAME (sans directory) are removed."
       (when dired-sidebar-close-sidebar-on-file-open
         (dired-sidebar-hide-sidebar)))))
 (defalias 'dired-sidebar-find-file-alt 'my:dired-sidebar-find-file-alt)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (ansible-vault ansible-doc ansible hyperbole yasnippet yaml-mode xml-rpc w3m twittering-mode puppet-mode php-mode pfuture nginx-mode markdown-mode magit js2-mode hydra ht go-mode geben fixmee f edit-indirect dired-sidebar csv-mode buffer-move auto-complete ace-window))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
