@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2019-05-17 08:23:26 fatehks>
+;; Time-stamp: <2019-05-17 11:44:04 fatehks>
 
 ;;; Commentary:
 
@@ -110,6 +110,8 @@
 (package-install 'ansible)
 (package-install 'ansible-doc)
 (package-install 'ansible-vault)
+(package-install 'dockerfile-mode)
+(package-install 'groovy-mode)
 
 ;; not used, but might be used in the future
 ;(package-install 'twittering-mode)
@@ -520,7 +522,7 @@ Spaces at the start of FILENAME (sans directory) are removed."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (ansible-vault ansible-doc ansible hyperbole yasnippet yaml-mode xml-rpc w3m twittering-mode puppet-mode php-mode pfuture nginx-mode markdown-mode magit js2-mode hydra ht go-mode geben fixmee f edit-indirect dired-sidebar csv-mode buffer-move auto-complete ace-window))))
+    (groovy-mode dockerfile-mode ansible-vault ansible-doc ansible hyperbole yasnippet yaml-mode xml-rpc w3m twittering-mode puppet-mode php-mode pfuture nginx-mode markdown-mode magit js2-mode hydra ht go-mode geben fixmee f edit-indirect dired-sidebar csv-mode buffer-move auto-complete ace-window))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
