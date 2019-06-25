@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2019-05-17 11:44:04 fatehks>
+;; Time-stamp: <2019-06-25 08:47:37 DHisel1>
 
 ;;; Commentary:
 
@@ -21,6 +21,9 @@
 ;;
 ;; Install deps on Fedora 29:
 ;;     $ sudo dnf install bzr git-cvs autoconf texinfo w3m w3m-img
+;;
+;; Install deps on Win10 using MSYS2:
+;;     $ pacman -S bzr cvs autoconf texinfo w3m markdown
 
 ;;; Code:
 
@@ -84,7 +87,7 @@
 	     '("melpa" . "http://melpa.org/packages/") t)
 
 (when (not package-archive-contents)
-    (package-refresh-contents t))
+  (package-refresh-contents t))
 (package-initialize)
 
 ;; To list packages M-x list-packages RET
@@ -104,6 +107,7 @@
 (package-install 'js2-mode)
 (package-install 'go-mode)
 (package-install 'markdown-mode)
+(package-install 'markdown-toc)
 (package-install 'edit-indirect)
 (package-install 'yaml-mode)
 (package-install 'dired-sidebar)
@@ -112,13 +116,23 @@
 (package-install 'ansible-vault)
 (package-install 'dockerfile-mode)
 (package-install 'groovy-mode)
+(package-install 'gitlab)
+(package-install 'gitlab-ci-mode)
+(package-install 'gitlab-ci-mode-flycheck)
+(package-install 'edbi)
+(package-install 'edbi-minor-mode)
+(package-install 'edbi-sqlite)
+(package-install 'graphviz-dot-mode)
+(package-install 'adoc-mode)
+(package-install 'emacsql)
+(package-install 'emacsql-sqlite)
 
-;; not used, but might be used in the future
-;(package-install 'twittering-mode)
-;(package-install 'maxframe)
-;(package-install 'neotree)
-;(package-install 'treemacs)
-;(package-install 'treemacs-magit)
+;;* not used, but might be used in the future
+;;(package-install 'twittering-mode)
+;;(package-install 'maxframe)
+;;(package-install 'neotree)
+;;(package-install 'treemacs)
+;;(package-install 'treemacs-magit)
 
 
 ;;; Zone Out
@@ -150,15 +164,15 @@
 			    (find-file-noselect
 			     (expand-file-name "init.el" user-emacs-directory)))))
 (global-set-key (kbd "C-h C-n") '(lambda ()
-			   (interactive)
-			   (switch-to-buffer
-			    (find-file-noselect
-			     (expand-file-name "Notes.txt" user-documents-dir)))))
+				   (interactive)
+				   (switch-to-buffer
+				    (find-file-noselect
+				     (expand-file-name "Notes.txt" user-documents-dir)))))
 (global-set-key (kbd "C-h C-/") '(lambda ()
-			   (interactive)
-			   (switch-to-buffer 
-			    (find-file-noselect
-			     (expand-file-name "links.org" user-org-directory)))))
+				   (interactive)
+				   (switch-to-buffer 
+				    (find-file-noselect
+				     (expand-file-name "links.org" user-org-directory)))))
 
 (global-set-key (kbd "C-h C-b") 'browse-url-at-point)
 
@@ -171,12 +185,12 @@
 
 (global-set-key "\C-h9" 'my:toggle-fullscreen)
 
- (defun my:toggle-fullscreen ()
-   "Toggle full screen"
-   (interactive)
-   (set-frame-parameter
-    nil 'fullscreen
-    (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
+(defun my:toggle-fullscreen ()
+  "Toggle full screen"
+  (interactive)
+  (set-frame-parameter
+   nil 'fullscreen
+   (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
 
 (eval-when-compile (require 'cl))
 (set-frame-parameter nil 'alpha '(100 100))
@@ -354,7 +368,8 @@ Spaces at the start of FILENAME (sans directory) are removed."
       (require 'w3m)
       ;;(setq browse-url-browser-function 'browse-url-generic)
       ;;(setq browse-url-browser-function 'browse-url-default-macosx-browser)
-      (setq browse-url-generic-program "/opt/google/chrome/chrome")
+      ;;(setq browse-url-generic-program "/opt/google/chrome/chrome")
+      (setq browse-url-generic-program "/mnt/c/Program Files/Mozilla Firefox/firefox.exe")
 
       (defun choose-browser (url &rest args)
 	(interactive "sURL: ")
@@ -363,6 +378,7 @@ Spaces at the start of FILENAME (sans directory) are removed."
 	  (w3m-browse-url url)))
 
       (setq browse-url-browser-function 'choose-browser)))
+
 
 (defun browse-url-default-macosx-browser (url &optional new-window)
   (interactive (browse-url-interactive-arg "URL: "))
@@ -454,7 +470,7 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;;; EmacsServer  "server.el"
 ;;; Connect term via $ emacsclient -t   # exit with C-x 5 0
 ;;; Connect  gui via $ emacsclient FILE # exit with C-x #
-(setq server-socket-dir (format "/tmp/emacs%d" (user-uid)))
+(setq server-socket-dir (format "/tmp/emacs/%d" (user-uid)))
 (server-start)
 
 
@@ -496,7 +512,9 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;;; Markdown-mode
 (require 'markdown-mode)
 ;; To install on fedora: sudo dnf install perl-Text-MultiMarkdown
-(setq markdown-command "/usr/bin/MultiMarkdown.pl")
+(if (eq system-type 'windows-nt)
+    (setq markdown-command "c:\\opt\\msys64\\usr\\bin\\markdown")
+  (setq markdown-command "/usr/bin/MultiMarkdown.pl"))
 
 ;;; dired-sidebar
 (require 'dired-sidebar)
@@ -510,11 +528,25 @@ Spaces at the start of FILENAME (sans directory) are removed."
              ;; For "." open a full-blown dired buffer, since the directory is
              ;; already open in the sidebar.
              (not (string= (file-name-nondirectory dired-file-name) ".")))
-      (switch-to-buffer (dired-sidebar-buffer))
+	(switch-to-buffer (dired-sidebar-buffer))
       (display-buffer (find-file-noselect dired-file-name) t)
       (when dired-sidebar-close-sidebar-on-file-open
         (dired-sidebar-hide-sidebar)))))
 (defalias 'dired-sidebar-find-file-alt 'my:dired-sidebar-find-file-alt)
+
+(defun my:run-bash ()
+  "TODO: Run this in Powershell as Admin `Set-Service ssh-agent -StartupType Manual`"
+  (interactive)
+  (let ((shell-file-name "C:\\opt\\msys64\\usr\\bin\\bash.exe"))
+    (progn
+      ;;(setenv "PATH" (concat "/mingw64/bin:/usr/bin:" (getenv "PATH")))
+      ;;(setenv "GIT_SSH" "/usr/bin/ssh")
+      (setenv "PS1" "(EMACS) \\[\\e[32m\\]\\u@\\h \\[\\e[35m\\]$MSYSTEM\\[\\e[0m\\] \\[\\e[33m\\]\\w\\[\\e[0m\\]\\n\\[\\e[1m\\]#\\[\\e[0m\\] ")
+      (cd (getenv "HOME"))
+      (shell "*bash*"))))
+(defalias 'run-bash 'my:run-bash)
+
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -522,10 +554,11 @@ Spaces at the start of FILENAME (sans directory) are removed."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (groovy-mode dockerfile-mode ansible-vault ansible-doc ansible hyperbole yasnippet yaml-mode xml-rpc w3m twittering-mode puppet-mode php-mode pfuture nginx-mode markdown-mode magit js2-mode hydra ht go-mode geben fixmee f edit-indirect dired-sidebar csv-mode buffer-move auto-complete ace-window))))
+    (emacsql-sqlite emacsql adoc-mode graphviz-dot-mode edbi-minor-mode edbi-sqlite edbi gitlab-ci-mode-flycheck gitlab-ci-mode gitlab markdown-toc groovy-mode dockerfile-mode ansible-vault ansible-doc ansible hyperbole yasnippet yaml-mode xml-rpc w3m twittering-mode puppet-mode php-mode pfuture nginx-mode markdown-mode magit js2-mode hydra ht go-mode geben fixmee f edit-indirect dired-sidebar csv-mode buffer-move auto-complete ace-window))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
