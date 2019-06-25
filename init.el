@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2019-06-25 14:20:49 dhisel1>
+;; Time-stamp: <2019-06-25 14:30:43 dhisel1>
 
 ;;; Commentary:
 
@@ -98,6 +98,7 @@
 ;; To list packages M-x list-packages RET
 ;; Install packages from Melpa
 (package-install 'hyperbole)
+(package-install 'iedit)
 (package-install 'yasnippet)
 (package-install 'magit)
 (package-install 'csv-mode)
