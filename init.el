@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2019-06-25 08:47:37 DHisel1>
+;; Time-stamp: <2019-06-25 14:20:49 dhisel1>
 
 ;;; Commentary:
 
@@ -18,12 +18,16 @@
 ;; autoconf -- dnf install autoconf
 ;; makeinfo -- dnf install texinfo
 ;; w3m -- dnf install w3m w3m-img
+;; markdown
 ;;
 ;; Install deps on Fedora 29:
-;;     $ sudo dnf install bzr git-cvs autoconf texinfo w3m w3m-img
+;;     $ sudo dnf install bzr git-cvs autoconf texinfo w3m perl-Text-MultiMarkdown
 ;;
 ;; Install deps on Win10 using MSYS2:
 ;;     $ pacman -S bzr cvs autoconf texinfo w3m markdown
+;;
+;; Install deps on Mac using macports:
+;;     $ sudo port install bzr cvs autoconf texinfo w3m multimarkdown
 
 ;;; Code:
 
@@ -44,6 +48,7 @@
 
 ;;;
 (setenv "PAGER" "cat")
+(cd (getenv "HOME"))
 
 ;;; Behaviour
 (setq inhibit-startup-message t)
@@ -92,6 +97,7 @@
 
 ;; To list packages M-x list-packages RET
 ;; Install packages from Melpa
+(package-install 'hyperbole)
 (package-install 'yasnippet)
 (package-install 'magit)
 (package-install 'csv-mode)
@@ -119,15 +125,15 @@
 (package-install 'gitlab)
 (package-install 'gitlab-ci-mode)
 (package-install 'gitlab-ci-mode-flycheck)
-(package-install 'edbi)
-(package-install 'edbi-minor-mode)
-(package-install 'edbi-sqlite)
 (package-install 'graphviz-dot-mode)
 (package-install 'adoc-mode)
-(package-install 'emacsql)
-(package-install 'emacsql-sqlite)
 
 ;;* not used, but might be used in the future
+;;(package-install 'edbi)
+;;(package-install 'edbi-minor-mode)
+;;(package-install 'edbi-sqlite)
+;;(package-install 'emacsql)
+;;(package-install 'emacsql-sqlite)
 ;;(package-install 'twittering-mode)
 ;;(package-install 'maxframe)
 ;;(package-install 'neotree)
@@ -360,24 +366,17 @@ Spaces at the start of FILENAME (sans directory) are removed."
   (save-excursion (mark-defun)
 		  (perltidy-region)))
 
-(if (not (eq system-type 'windows-nt))
-    (progn
-
 ;;; http://www.emacswiki.org/cgi-bin/wiki/BrowseUrl
-      ;;(require 'w3m-load)
-      (require 'w3m)
-      ;;(setq browse-url-browser-function 'browse-url-generic)
-      ;;(setq browse-url-browser-function 'browse-url-default-macosx-browser)
-      ;;(setq browse-url-generic-program "/opt/google/chrome/chrome")
-      (setq browse-url-generic-program "/mnt/c/Program Files/Mozilla Firefox/firefox.exe")
+;;(setq w3m-command "/opt/local/bin/w3m")
+(require 'w3m)
 
-      (defun choose-browser (url &rest args)
-	(interactive "sURL: ")
-	(if (y-or-n-p "Use external browser? ")
-	    (browse-url-generic url)
-	  (w3m-browse-url url)))
+(defun choose-browser (url &rest args)
+  (interactive "sURL: ")
+  (if (y-or-n-p "Use external browser? ")
+      (browse-url-generic url)
+    (w3m-browse-url url)))
 
-      (setq browse-url-browser-function 'choose-browser)))
+(setq browse-url-browser-function 'choose-browser)
 
 
 (defun browse-url-default-macosx-browser (url &optional new-window)
@@ -455,12 +454,7 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;;     ‘M-x list-tags’ – list all tags defined in a source file
 ;; 
 ;; See the Emacs manual, node Tags for more information: Tags.
-(setq path-to-ctags "/usr/bin/ctags")
-(if (eq system-type 'darwin)
-    (setq path-to-ctags "/opt/local/bin/ctags"))
 
-(if (eq system-type 'windows-nt)
-    (setq path-to-ctags "c:/opt/bin/ctags.exe"))
 (defun create-tags (dir-name)
   "Create tags file."
   (interactive "DDirectory: ")
@@ -482,12 +476,6 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;;; Yasnippet
 (require 'yasnippet)
 (yas-global-mode 1)
-
-
-;;; Mac OS X
-(when (eq system-type 'darwin) ;; mac specific settings
-  (setq mac-option-modifier 'super)
-  (setq mac-command-modifier 'meta))
 
 ;;; EDiff
 ;; Split horizontally
@@ -511,10 +499,7 @@ Spaces at the start of FILENAME (sans directory) are removed."
 
 ;;; Markdown-mode
 (require 'markdown-mode)
-;; To install on fedora: sudo dnf install perl-Text-MultiMarkdown
-(if (eq system-type 'windows-nt)
-    (setq markdown-command "c:\\opt\\msys64\\usr\\bin\\markdown")
-  (setq markdown-command "/usr/bin/MultiMarkdown.pl"))
+
 
 ;;; dired-sidebar
 (require 'dired-sidebar)
@@ -534,31 +519,35 @@ Spaces at the start of FILENAME (sans directory) are removed."
         (dired-sidebar-hide-sidebar)))))
 (defalias 'dired-sidebar-find-file-alt 'my:dired-sidebar-find-file-alt)
 
-(defun my:run-bash ()
-  "TODO: Run this in Powershell as Admin `Set-Service ssh-agent -StartupType Manual`"
-  (interactive)
-  (let ((shell-file-name "C:\\opt\\msys64\\usr\\bin\\bash.exe"))
-    (progn
-      ;;(setenv "PATH" (concat "/mingw64/bin:/usr/bin:" (getenv "PATH")))
-      ;;(setenv "GIT_SSH" "/usr/bin/ssh")
-      (setenv "PS1" "(EMACS) \\[\\e[32m\\]\\u@\\h \\[\\e[35m\\]$MSYSTEM\\[\\e[0m\\] \\[\\e[33m\\]\\w\\[\\e[0m\\]\\n\\[\\e[1m\\]#\\[\\e[0m\\] ")
-      (cd (getenv "HOME"))
-      (shell "*bash*"))))
-(defalias 'run-bash 'my:run-bash)
+
+;; ========================================
+;; == Mac OS X Settings
+;;
+(when (eq system-type 'darwin)
+  ;; switch option <-> command key modifiers ... most keyboards have
+  ;; cmd-key closer to spacebar making it easier to use cmd-key as
+  ;; meta key
+  (setq mac-option-modifier 'super)
+  (setq mac-command-modifier 'meta)
+
+  (setq browse-url-browser-function 'browse-url-default-macosx-browser)
+
+  ;; Macports
+  (setq shell-file-name "/opt/local/bin/bash")
+  (setq markdown-command "/opt/local/bin/markdown")
+  (setq path-to-ctags "/opt/local/bin/ctags"))
 
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   (quote
-    (emacsql-sqlite emacsql adoc-mode graphviz-dot-mode edbi-minor-mode edbi-sqlite edbi gitlab-ci-mode-flycheck gitlab-ci-mode gitlab markdown-toc groovy-mode dockerfile-mode ansible-vault ansible-doc ansible hyperbole yasnippet yaml-mode xml-rpc w3m twittering-mode puppet-mode php-mode pfuture nginx-mode markdown-mode magit js2-mode hydra ht go-mode geben fixmee f edit-indirect dired-sidebar csv-mode buffer-move auto-complete ace-window))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;; ========================================
+;; == Windows Settings
+;;
+(when (eq system-type 'windows-nt)
+  (setq browse-url-browser-function 'browse-url-default-windows-browser)
 
+  ;; Msys2 or Chocolatey tools
+  (setq shell-file-name "C:\\opt\\msys64\\usr\\bin\\bash.exe")
+  (setq markdown-command "c:\\opt\\msys64\\usr\\bin\\markdown")
+  (setq path-to-ctags "c:/opt/bin/ctags.exe"))
+
+
+;; __END__
