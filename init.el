@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2019-06-25 14:30:43 dhisel1>
+;; Time-stamp: <2019-06-27 12:57:10 dhisel1>
 
 ;;; Commentary:
 
@@ -113,6 +113,11 @@
 (package-install 'buffer-move)
 (package-install 'js2-mode)
 (package-install 'go-mode)
+(package-install 'go-playground)
+(package-install 'go-complete)
+(package-install 'go-direx)
+(package-install 'projectile)
+
 (package-install 'markdown-mode)
 (package-install 'markdown-toc)
 (package-install 'edit-indirect)
