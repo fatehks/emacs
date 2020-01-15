@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2019-06-27 12:57:10 dhisel1>
+;; Time-stamp: <2020-01-15 09:04:18 dhisel1>
 
 ;;; Commentary:
 
@@ -133,6 +133,8 @@
 (package-install 'gitlab-ci-mode-flycheck)
 (package-install 'graphviz-dot-mode)
 (package-install 'adoc-mode)
+(package-install 'terraform-mode)
+(package-install 'sr-speedbar)
 
 ;;* not used, but might be used in the future
 ;;(package-install 'edbi)
@@ -145,6 +147,12 @@
 ;;(package-install 'neotree)
 ;;(package-install 'treemacs)
 ;;(package-install 'treemacs-magit)
+
+
+;;; Theme
+;; https://draculatheme.com/emacs/
+;;(package-install 'dracula-theme)
+;;(load-theme 'dracula t)
 
 
 ;;; Zone Out
@@ -373,7 +381,6 @@ Spaces at the start of FILENAME (sans directory) are removed."
 		  (perltidy-region)))
 
 ;;; http://www.emacswiki.org/cgi-bin/wiki/BrowseUrl
-;;(setq w3m-command "/opt/local/bin/w3m")
 (require 'w3m)
 
 (defun choose-browser (url &rest args)
@@ -498,7 +505,7 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;;; Date and Time-stamp
 (defun my:insert-date ()
   (interactive)
-  (insert (format-time-string "%Y-%m-%d")))
+  (insert (format-time-string "%Y-%m-%d %A")))
 (defun my:insert-timestamp ()
   (interactive)
   (insert (format-time-string "%Y-%m-%dT%H:%M:%S")))
@@ -525,6 +532,25 @@ Spaces at the start of FILENAME (sans directory) are removed."
         (dired-sidebar-hide-sidebar)))))
 (defalias 'dired-sidebar-find-file-alt 'my:dired-sidebar-find-file-alt)
 
+;;; fixmee (fixmee.el)
+;;; https://github.com/rolandwalker/fixmee
+;;; C-c f 	fixmee-goto-nextmost-urgent
+;;; C-c F 	fixmee-goto-prevmost-urgent
+;;; C-c v 	fixmee-view-listing
+;;; M-n 	fixmee-goto-next-by-position ; only when the point is
+;;; M-p 	fixmee-goto-previous-by-position ; inside a fixme notice
+(require 'button-lock)
+(require 'fixmee)
+(global-fixmee-mode 1)
+
+;;; Hyperbole (hyperbole.el)
+(require 'hyperbole)
+
+;;; Speedbar
+;;; https://www.emacswiki.org/emacs/SrSpeedbar
+(require 'sr-speedbar)
+(global-set-key "\C-h\C-f" 'sr-speedbar-toggle)
+
 
 ;; ========================================
 ;; == Mac OS X Settings
@@ -539,6 +565,7 @@ Spaces at the start of FILENAME (sans directory) are removed."
   (setq browse-url-browser-function 'browse-url-default-macosx-browser)
 
   ;; Macports
+  (setq w3m-command "/opt/local/bin/w3m")
   (setq shell-file-name "/opt/local/bin/bash")
   (setq markdown-command "/opt/local/bin/markdown")
   (setq path-to-ctags "/opt/local/bin/ctags"))
@@ -551,6 +578,7 @@ Spaces at the start of FILENAME (sans directory) are removed."
   (setq browse-url-browser-function 'browse-url-default-windows-browser)
 
   ;; Msys2 or Chocolatey tools
+  (setq w3m-command "c:\\opt\\msys64\\usr\\bin\\w3m") ; FIXME
   (setq shell-file-name "C:\\opt\\msys64\\usr\\bin\\bash.exe")
   (setq markdown-command "c:\\opt\\msys64\\usr\\bin\\markdown")
   (setq path-to-ctags "c:/opt/bin/ctags.exe"))
