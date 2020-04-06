@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2020-01-15 09:04:18 dhisel1>
+;; Time-stamp: <2020-04-06 12:47:45 dhisel1>
 
 ;;; Commentary:
 
@@ -49,6 +49,8 @@
 ;;;
 (setenv "PAGER" "cat")
 (cd (getenv "HOME"))
+(setq my:gopath (concat (replace-regexp-in-string "\r?\n$" "" (shell-command-to-string "go env GOPATH")) "/bin"))
+
 
 ;;; Behaviour
 (setq inhibit-startup-message t)
@@ -85,33 +87,28 @@
 ;;(set-face-background 'modeline "darkred")
 ;;(set-face-foreground 'modeline "white")
 
+;; Required to get package-refresh-contents to work with elpa
+(setq gnutls-algorithm-priority "normal:-vers-tls1.3")
 
 ;;; Melpa
 (require 'package)
 (add-to-list 'package-archives
-	     '("melpa" . "http://melpa.org/packages/") t)
+	     '("melpa" . "https://melpa.org/packages/") t)
 
 (when (not package-archive-contents)
-  (package-refresh-contents t))
+  (package-refresh-contents nil))
 (package-initialize)
 
 ;; To list packages M-x list-packages RET
 ;; Install packages from Melpa
 (package-install 'hyperbole)
-(package-install 'iedit)
-(package-install 'yasnippet)
 (package-install 'magit)
 (package-install 'csv-mode)
-(package-install 'puppet-mode)
-(package-install 'nginx-mode)
 (package-install 'auto-complete)
-(package-install 'geben)
-(package-install 'php-mode)
-(package-install 'xml-rpc)
-(package-install 'w3m)
 (package-install 'fixmee)
 (package-install 'buffer-move)
 (package-install 'js2-mode)
+(package-install 'yaml-mode)
 (package-install 'go-mode)
 (package-install 'go-playground)
 (package-install 'go-complete)
@@ -121,13 +118,11 @@
 (package-install 'markdown-mode)
 (package-install 'markdown-toc)
 (package-install 'edit-indirect)
-(package-install 'yaml-mode)
 (package-install 'dired-sidebar)
 (package-install 'ansible)
 (package-install 'ansible-doc)
 (package-install 'ansible-vault)
 (package-install 'dockerfile-mode)
-(package-install 'groovy-mode)
 (package-install 'gitlab)
 (package-install 'gitlab-ci-mode)
 (package-install 'gitlab-ci-mode-flycheck)
@@ -135,8 +130,21 @@
 (package-install 'adoc-mode)
 (package-install 'terraform-mode)
 (package-install 'sr-speedbar)
+(package-install 'mustache)
+(package-install 'mustache-mode)
+
+(package-install 'nginx-mode)
+(package-install 'w3m)
 
 ;;* not used, but might be used in the future
+;;(package-install 'iedit)
+;;(package-install 'yasnippet)
+;;(package-install 'puppet-mode)
+;;(package-install 'geben)
+;;(package-install 'php-mode)
+;;(package-install 'xml-rpc)
+;;(package-install 'groovy-mode)
+
 ;;(package-install 'edbi)
 ;;(package-install 'edbi-minor-mode)
 ;;(package-install 'edbi-sqlite)
@@ -162,7 +170,7 @@
 ;;; Global Key Bindings
 (global-set-key "\C-xo" 'next-multiframe-window)
 (global-set-key "\C-xp" 'previous-multiframe-window)
-(global-set-key "\C-hh" 'help-for-help)
+;; (global-set-key "\C-hh" 'help-for-help)
 (global-set-key "\C-hg" 'magit-status)
 
 (global-set-key (kbd "<f12>") 'clipboard-kill-ring-save)
@@ -381,6 +389,7 @@ Spaces at the start of FILENAME (sans directory) are removed."
 		  (perltidy-region)))
 
 ;;; http://www.emacswiki.org/cgi-bin/wiki/BrowseUrl
+(setq w3m-command "/opt/local/bin/w3m")
 (require 'w3m)
 
 (defun choose-browser (url &rest args)
@@ -402,8 +411,8 @@ Spaces at the start of FILENAME (sans directory) are removed."
 
 
 ;;; PHP-Mode
-(require 'php-mode)
-(add-hook 'php-mode-hook 'turn-on-font-lock)
+;;(require 'php-mode)
+;;(add-hook 'php-mode-hook 'turn-on-font-lock)
 
 ;;; ASCII table
 ;;(autoload 'ascii-table "ascii-table" nil t)
@@ -487,8 +496,8 @@ Spaces at the start of FILENAME (sans directory) are removed."
 (ac-config-default)
 
 ;;; Yasnippet
-(require 'yasnippet)
-(yas-global-mode 1)
+;;(require 'yasnippet)
+;;(yas-global-mode 1)
 
 ;;; EDiff
 ;; Split horizontally
@@ -565,6 +574,7 @@ Spaces at the start of FILENAME (sans directory) are removed."
   (setq browse-url-browser-function 'browse-url-default-macosx-browser)
 
   ;; Macports
+  (setenv "PATH" (concat "/opt/local/bin:" (getenv "PATH")))
   (setq w3m-command "/opt/local/bin/w3m")
   (setq shell-file-name "/opt/local/bin/bash")
   (setq markdown-command "/opt/local/bin/markdown")
@@ -584,4 +594,23 @@ Spaces at the start of FILENAME (sans directory) are removed."
   (setq path-to-ctags "c:/opt/bin/ctags.exe"))
 
 
+(setenv "PATH" (concat my:gopath ":" (getenv "PATH")))
+
+
+
 ;; __END__
+
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (gitlab-ci-mode markdown-mode go-mode yaml-mode w3m terraform-mode sr-speedbar projectile nginx-mode mustache-mode mustache markdown-toc magit js2-mode hyperbole graphviz-dot-mode go-playground go-direx go-complete gitlab-ci-mode-flycheck gitlab fixmee edit-indirect dockerfile-mode dired-sidebar csv-mode buffer-move auto-complete ansible-vault ansible-doc ansible adoc-mode))))
