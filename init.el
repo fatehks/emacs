@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2014-11-13 08:31:27 davidh>
+;; Time-stamp: <2019-01-10 19:04:58 davidh>
 
 ;;; Commentary:
 
@@ -28,6 +28,7 @@
 ;;; Code:
 
 (require 'cl)
+(eval-when-compile (require 'cl))
 (add-to-list 'load-path user-lisp-dir)
 
 ;;; Startup
@@ -44,7 +45,9 @@
 (put 'erase-buffer 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
 (add-hook 'before-save-hook 'time-stamp) ; time-stamp.el
-(iswitchb-mode 1)
+;;(iswitchb-mode 1)
+;;(icomplete-mode 1)
+
 
 ;;; Appearance
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
@@ -121,6 +124,14 @@
 			   :features "yasnippet"
 			   :compile "yasnippet.el")
 
+		(:name smtpmail-multi
+			   :website "https://github.com/vapniks/smtpmail-multi.git"
+			   :description "Use different smtp servers for sending email."
+			   :type github
+			   :pkgname "vapniks/smtpmail-multi"
+			   :features "smtpmail-multi"
+			   :compile "smtpmail-multi.el")
+
 		(:name rpm-spec-mode
 			   :description "RPM spec file mode"
 			   :type http
@@ -134,25 +145,65 @@
 			   :url "http://www.emacswiki.org/emacs/download/jira.el"
 			   :after (progn ()
 							 (autoload 'jira "jira" "JIRA mode" t)))
+		(:name mu
+			   :website "http://www.emacswiki.org/emacs/mu.el"
+			   :description "Emacs MUSH client"
+			   :type http
+			   :url "http://www.emacswiki.org/emacs/download/mu.el")
 		(:name org-jira
 			   :website "https://github.com/baohaojun/org-jira.git"
 			   :description "Use JIRA in Emacs org-mode."
 			   :type github
 			   :pkgname "baohaojun/org-jira"
 			   :features "org-jira"
-			   :compile "yasnippet.el")
+			   :compile "org-jira.el")
+		(:name fixmee
+			   :website "https://github.com/rolandwalker/fixmee.git"
+			   :description "Quickly navigate to FIXME notices in Emacs."
+			   :type github
+			   :pkgname "rolandwalker/fixmee"
+			   :features "fixmee"
+			   :compile "fixmee.el")
+		(:name button-lock
+			   :website "https://github.com/rolandwalker/button-lock.git"
+			   :description "Quickly navigate to FIXME notices in Emacs."
+			   :type github
+			   :pkgname "rolandwalker/button-lock"
+			   :features "button-lock"
+			   :compile "button-lock.el")
+		(:name neotree
+			   :type github
+			   :pkgname "jaypei/emacs-neotree"
+			   :description "An emacs tree plugin like NERD tree for Vim.  https://github.com/jaypei/emacs-neotree")
+		(:name skeletor
+			   :type github
+			   :pkgname "chrisbarrett/skeletor.el"
+			   :description "Powerful project skeletons for Emacs.  https://github.com/chrisbarrett/skeletor.el#usage")
 
+		;; (:name dracula-theme
+		;; 	   :website "https://github.com/dracula/emacs.git"
+		;; 	   :description "Dracula Theme."
+		;; 	   :type github
+		;; 	   :pkgname "dracula/emacs"
+		;; 	   :features "dracula-theme"
+		;; 	   :compile "dracula-theme.el")
 
-
-
+		;;; __END__ of el-get-sources
   		))
 
 (setq my-packages 
 	  (append '(
 				el-get
+				;;ecb
+				mu
+				;;fixmee
+				;;dracula-theme
 				csv-mode
 				magit
 				;;ascii-table
+				neotree
+				sr-speedbar
+				projectile
 				php-mode-improved
 				puppet-mode
 				maxframe
@@ -160,6 +211,11 @@
 				auto-complete
 				xml-rpc-el
 				twittering-mode
+				ssh-config
+				lua-mode
+				markdown-mode
+				erc-extras
+				;;helm
 				tail)
 			  (mapcar 'el-get-source-name el-get-sources)))
 
@@ -185,6 +241,10 @@
 (global-set-key "\C-hh" 'help-for-help)
 (global-set-key "\C-hg" 'magit-status)
 
+;;; Dash - https://github.com/stanaka/dash-at-point
+;;(global-set-key "\C-hd" 'dash-at-point)
+;;(global-set-key "\C-he" 'dash-at-point-with-docset)
+
 (global-set-key (kbd "<f12>") 'clipboard-kill-ring-save)
 (global-set-key "\C-h\C-w"    'clipboard-kill-ring-save)
 (global-set-key "\C-h\C-y"    'clipboard-yank)
@@ -201,33 +261,39 @@
 						   (switch-to-buffer 
 							(find-file-noselect
 							 (expand-file-name "init.el" user-emacs-dir)))))
-(global-set-key "\C-h9" 'my-toggle-fullscreen)
+(global-set-key "\C-h9" 'my-toggle-maximize)
+(global-set-key "\C-c\C-h\C-h" 'neotree-toggle)
+(global-set-key "\C-c\C-hn" 'newsticker-show-news)
 
-(defun my-toggle-fullscreen ()
-  "Toggle full screen"
-  (interactive)
-  (set-frame-parameter
-     nil 'fullscreen
-     (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
+;;; Define my own keymap overlay with this prefix
+;;; TODO: implement my own keymap
+;;(setq my-keymap-prefix "\C-c\C-h")
 
 
-(eval-when-compile (require 'cl))
+(defun my-toggle-maximize (arg)
+  "Toggle full screen, with arg make fullscreen."
+  (interactive "P")
+  (cond
+   (arg (toggle-frame-fullscreen))
+   (t   (toggle-frame-maximized))))
+  
+
+;;; (my-toggle-transparency)
+(global-set-key (kbd "C-h C-t") 'my-toggle-transparency)
 (set-frame-parameter nil 'alpha '(100 100))
-(defun toggle-transparency ()
+(defun my-toggle-transparency ()
   (interactive)
-  (if (/=
-	   (cadr (frame-parameter nil 'alpha))
-	   100)
-	  (set-frame-parameter nil 'alpha '(100 100))
-	(set-frame-parameter nil 'alpha '(85 50))))
-(global-set-key (kbd "C-h C-t") 'toggle-transparency)
+  (if (= (car (frame-parameter nil 'alpha)) 100)
+	  (set-frame-parameter nil 'alpha '(50 50))
+	(set-frame-parameter nil 'alpha '(100 100))))
 
 
 ;;; <http://wordaligned.org/articles/ignoring-svn-directories>
 ;;; Use ctrl-x backtick to jump to the right place in the matching file.
 (global-set-key [f8] 'grep-find)
+(global-set-key (kbd "C-h C-f") 'grep-find)
 (setq grep-find-command
-      "find . -path '*/.svn' -prune -o -type f -print | xargs -e grep -I -n -e ")
+      "find . -path '*/.svn' -prune -o -path '*/.git' -prune -o -type f -print | xargs -e grep -I -n -e ")
 
 ;;; From the Emacs FAQ
 ;;; '%' finds matching paren
@@ -351,17 +417,18 @@ Spaces at the start of FILENAME (sans directory) are removed."
 (if (not (eq system-type 'windows-nt))
 	(progn
 
-;;; http://www.emacswiki.org/cgi-bin/wiki/BrowseUrl
+;;; http://www.emacswiki.org/emacs/BrowseUrl
 	  (require 'w3m-load)
 	  (require 'w3m)
+	  ;;(setq browse-url-browser-function 'browse-url-default-macosx-browser)
 	  ;;(setq browse-url-browser-function 'browse-url-generic)
-	  (setq browse-url-browser-function 'browse-url-default-macosx-browser)
 	  ;;(setq browse-url-generic-program "/opt/google/chrome/google-chrome")
 
 	  (defun choose-browser (url &rest args)
 		(interactive "sURL: ")
 		(if (y-or-n-p "Use external browser? ")
-			(browse-url-generic url)
+			;(browse-url-generic url)
+			(browse-url-default-macosx-browser url)
 		  (w3m-browse-url url)))
 
 	  (setq browse-url-browser-function 'choose-browser)))
@@ -381,6 +448,7 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;;; (fetched by el-get)
 (require 'php-mode)
 (add-hook 'php-mode-hook 'turn-on-font-lock)
+(setq php-manual-path "/Users/davidh/.emacs.d/docs/php/php_manual_en.html")
 
 ;;; ASCII table
 (autoload 'ascii-table "ascii-table" nil t)
@@ -391,9 +459,14 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;; (setq tramp-default-proxies-alist nil)
 ;; (add-to-list 'tramp-default-proxies-alist '("stage"         "root" "/ssh:%h:"))
 
+;;; /usr/bin/ssh -v -N -S none -o ControlMaster=no -o ExitOnForwardFailure=yes -o ConnectTimeout=10 -o NumberOfPasswordPrompts=3 -o TCPKeepAlive=no -o ServerAliveInterval=60 -o ServerAliveCountMax=1 app1 -L 63306:ro.jbi.coeusblue.net:3306 -f
+
+;;; /usr/bin/ssh -v -N -S none utiltunnel -L 63306:ro.jbi.coeusblue.net:3306 -f
+
+
 ;;; sql-mysql
 (require 'sql)
-(setq sql-mysql-options '("-C" "-t" "-f"))
+(setq sql-mysql-options '("-C" "-t" "-f" "-A"))
 (defun sql-mysql-with-maybe-port (&optional port-p)
   "Function helper for sql-mysql, if prefixed, to specify a port."
   (interactive "P")
@@ -402,6 +475,22 @@ Spaces at the start of FILENAME (sans directory) are removed."
 				 (if port-p
 					 (list (concat "--port=" (read-string "Port: ")))))))
     (call-interactively 'sql-mysql)))
+
+;;; sql mode "sql.el"
+(eval-after-load "sql"
+  (load-library "sql-indent")) ; "sql-indent.el"
+(setq sql-indent-first-column-regexp
+	  (concat "^\\s-*\\(" (regexp-opt '(
+									 "select" "update" "insert" "delete"
+									 "delimiter" "use"
+									 "create" "truncate" "begin" "end" "alter"
+									 "--") t)
+			  "\\|"
+			  "drop\\s-*table"
+			  "\\)\\(\\b\\|\\s-\\)"))
+
+;;; sql-ms
+(setq sql-ms-options '())
 
 ;; ctags -- http://www.emacswiki.org/emacs/BuildTags
 ;; Usage:
@@ -444,12 +533,10 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;;     ‘M-x list-tags’ – list all tags defined in a source file
 ;; 
 ;; See the Emacs manual, node Tags for more information: Tags.
-(setq path-to-ctags "/usr/bin/ctags")
-(if (eq system-type 'darwin)
-	(setq path-to-ctags "/opt/local/bin/ctags"))
+;; TODO: there is a ctags module, check it out
+;;(setq path-to-ctags "/usr/bin/ctags")
+(setq path-to-ctags "/opt/local/bin/ctags")
 
-(if (eq system-type 'windows-nt)
-	(setq path-to-ctags "c:/opt/bin/ctags.exe"))
 (defun create-tags (dir-name)
   "Create tags file."
   (interactive "DDirectory: ")
@@ -482,10 +569,15 @@ Spaces at the start of FILENAME (sans directory) are removed."
 (yas-global-mode 1)
 
 
-;;;
-(when (eq system-type 'darwin) ;; mac specific settings
+;;; Mac settings
+(when (eq system-type 'darwin)
   (setq mac-option-modifier 'super)
-  (setq mac-command-modifier 'meta))
+  (setq mac-command-modifier 'meta)
+  (setq path-to-ctags "/opt/local/bin/ctags"))
+
+;;; Windows settings
+(when (eq system-type 'windows-nt)
+  (setq path-to-ctags "c:/opt/bin/ctags.exe"))
 
 ;;; EDiff
 ;; Split horizontally
@@ -497,5 +589,165 @@ Spaces at the start of FILENAME (sans directory) are removed."
 ;;(setq jira-url "https://julepdev.atlassian.net/rpc/xmlrpc")
 ;;(require 'jira)
 
-(setq jiralib-url "https://julepdev.atlassian.net") 
-(require 'org-jira)
+;;(setq jiralib-url "https://julepdev.atlassian.net") 
+;;(require 'org-jira)
+
+;;; ssh-config (ssh-config-mode.el)
+(autoload 'ssh-config-mode "ssh-config-mode" t)
+(add-to-list 'auto-mode-alist '(".ssh/config\\'"  . ssh-config-mode))
+(add-to-list 'auto-mode-alist '("sshd?_config\\'" . ssh-config-mode))
+(add-hook 'ssh-config-mode-hook 'turn-on-font-lock)
+
+;;; http://www.cliki.net/slime-howto
+;(setq inferior-lisp-program "/opt/local/bin/ccl64 -K utf-8")
+;(require 'slime)
+
+
+(load (expand-file-name "~/quicklisp/slime-helper.el"))
+(setq inferior-lisp-program "/opt/local/bin/ccl64 -K utf-8")
+
+(set-language-environment "utf-8")
+(setq slime-net-coding-system 'utf-8-unix)
+(slime-setup '(slime-fancy))
+
+
+;;; SSH Config
+(autoload 'ssh-config-mode "ssh-config-mode" t)
+(add-to-list 'auto-mode-alist '(".ssh/config\\'"       . ssh-config-mode))
+(add-to-list 'auto-mode-alist '("sshd?_config\\'"      . ssh-config-mode))
+(add-to-list 'auto-mode-alist '("known_hosts\\'"       . ssh-known-hosts-mode))
+(add-to-list 'auto-mode-alist '("authorized_keys2?\\'" . ssh-authorized-keys-mode))
+(add-hook 'ssh-config-mode-hook 'turn-on-font-lock)
+
+;;; lua-mode
+(autoload 'lua-mode "lua-mode" "Lua editing mode." t)
+(add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
+(add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
+
+;;; BBDB
+;; (setq bbdb-file "~/.emacs.d/bbdb")           ;; keep ~/ clean; set before loading
+;; (require 'bbdb) 
+;; (bbdb-initialize)
+;; (setq 
+;;     bbdb-offer-save 1                        ;; 1 means save-without-asking
+
+;;     bbdb-use-pop-up t                        ;; allow popups for addresses
+;;     bbdb-electric-p t                        ;; be disposable with SPC
+;;     bbdb-popup-target-lines  1               ;; very small
+    
+;;     bbdb-dwim-net-address-allow-redundancy t ;; always use full name
+;;     bbdb-quiet-about-name-mismatches 2       ;; show name-mismatches 2 secs
+
+;;     bbdb-always-add-address t                ;; add new addresses to existing...
+;;                                              ;; ...contacts automatically
+;;     bbdb-canonicalize-redundant-nets-p t     ;; x@foo.bar.cx => x@bar.cx
+
+;;     bbdb-completion-type nil                 ;; complete on anything
+
+;;     bbdb-complete-name-allow-cycling t       ;; cycle through matches
+;;                                              ;; this only works partially
+
+;;     bbbd-message-caching-enabled t           ;; be fast
+;;     bbdb-use-alternate-names t               ;; use AKA
+
+
+;;     bbdb-elided-display t                    ;; single-line addresses
+
+;;     ;; auto-create addresses from mail
+;;     bbdb/mail-auto-create-p 'bbdb-ignore-some-messages-hook   
+;;     bbdb-ignore-some-messages-alist ;; don't ask about fake addresses
+;;     ;; NOTE: there can be only one entry per header (such as To, From)
+;;     ;; http://flex.ee.uec.ac.jp/texi/bbdb/bbdb_11.html
+
+;;     '(( "From" . "no.?reply\\|DAEMON\\|daemon\\|facebookmail\\|twitter")))
+
+
+;;; Wanderlust
+;;(autoload 'wl "wl" "Wanderlust" t)
+;;(autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
+;;(autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
+
+;;; mu.el
+;; Before playing, customize `mu-worlds'.  Then use `mu-open' to open a
+;; connection to one of the worlds.  This will automaticall create a mu
+;; connection buffer and a mu buffer.  You can type commands in either
+;; buffer and send them to the host with RET.  The output will be in the
+;; mu connection buffer.
+
+;; If you load ansi-color.el, you should be able to get ANSI colors.
+(require 'mu)
+
+
+;;; fixmee.el
+;; https://github.com/rolandwalker/fixmee
+;;
+;; Requires: button-lock.el, tabulated-list.el (included with Emacs 24.x)
+;;
+;; right-click on the word "fixme" in a comment
+;; for next-error support:
+;;
+;; M-x fixmee-view-listing RET
+;;
+;; C-c f fixmee-goto-nextmost-urgent
+;; C-c F fixmee-goto-prevmost-urgent
+;; C-c v fixmee-view-listing
+;; M-n   fixmee-goto-next-by-position ; only when the point is
+;; M-p   fixmee-goto-previous-by-position ; inside a fixme notice
+(require 'fixmee)
+(global-fixmee-mode 1)
+
+
+;;(require 'wiki-nav)
+;;(global-wiki-nav-mode 1)
+
+;;(require 'button-lock)
+;;(defun global-fixmee-mode-hook ())
+;;(defun global-fixmee-mode-check-buffers ())
+;;(defun button-lock-unset-button ())
+
+;;; XML
+(require 'hideshow)
+(require 'sgml-mode)
+(require 'nxml-mode)
+(add-to-list 'hs-special-modes-alist
+             '(nxml-mode
+               "<!--\\|<[^/>]*[^/]>"
+               "-->\\|</[^/>]*[^/]>"
+               "<!--"
+               sgml-skip-tag-forward
+               nil))
+(add-hook 'nxml-mode-hook 'hs-minor-mode)
+(define-key nxml-mode-map (kbd "C-c C-h") 'hs-toggle-hiding)
+
+;;; CSV
+;;; See custom.el for customized value, I added pipe-symbol
+;(csv-separators (quote ("," "	" "|")))
+
+;;; Shell
+;;(defun new-shell (name)
+;;  "Opens a new shell buffer with the given name in
+;;    asterisks (*name*) in the current directory and changes the
+;;    prompt to 'name>'."
+;;  (interactive "sName: ")
+;;  (pop-to-buffer (concat "*" name "*"))
+;;  (unless (eq major-mode 'shell-mode)
+;;	(shell (current-buffer))
+;;	(sleep-for 0 200)
+;;	(delete-region (point-min) (point-max))
+;;	(comint-simple-send (get-buffer-process (current-buffer)) 
+;;						(concat "export MYSHELL=\"" name "\""))))
+;;(global-set-key (kbd "C-c s") 'new-shell)
+
+;;; EShell
+
+;;; Neotree
+(require 'neotree)
+
+;;; Newsticker
+;; see customize variable 'newsticker-url-list
+
+;;; Yaml
+;;(require 'yaml-mode)
+
+;;; twittering-mode.el
+;;(require 'twittering-mode)
