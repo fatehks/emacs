@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2020-04-06 12:47:45 dhisel1>
+;; Time-stamp: <2020-12-16 08:51:42 dhisel1>
 
 ;;; Commentary:
 
@@ -49,7 +49,10 @@
 ;;;
 (setenv "PAGER" "cat")
 (cd (getenv "HOME"))
-(setq my:gopath (concat (replace-regexp-in-string "\r?\n$" "" (shell-command-to-string "go env GOPATH")) "/bin"))
+(setq my:gobinpath "/opt/local/bin/go")
+(setq my:gopath (concat
+		 (replace-regexp-in-string "\r?\n$" ""
+					   (shell-command-to-string (concat my:gobinpath " env GOPATH"))) "/bin"))
 
 
 ;;; Behaviour
@@ -83,6 +86,15 @@
 (set-foreground-color "white")
 ;; (set-background-color "white")
 ;; (set-foreground-color "black")
+;; (set-background-color "grey20")
+;; (set-foreground-color "grey90")
+;;; (setq default-frame-alist
+;;;       (append default-frame-alist
+;;; 	      '((foreground-color . "grey90")
+;;; 		(background-color . "grey20")
+;;; 		(cursor-color . "red")
+;;; 		)))
+
 
 ;;(set-face-background 'modeline "darkred")
 ;;(set-face-foreground 'modeline "white")
@@ -108,6 +120,7 @@
 (package-install 'fixmee)
 (package-install 'buffer-move)
 (package-install 'js2-mode)
+(package-install 'json-navigator)
 (package-install 'yaml-mode)
 (package-install 'go-mode)
 (package-install 'go-playground)
@@ -135,6 +148,9 @@
 
 (package-install 'nginx-mode)
 (package-install 'w3m)
+
+(package-install 'geiser)
+(package-install 'geiser-kawa)
 
 ;;* not used, but might be used in the future
 ;;(package-install 'iedit)
@@ -172,6 +188,7 @@
 (global-set-key "\C-xp" 'previous-multiframe-window)
 ;; (global-set-key "\C-hh" 'help-for-help)
 (global-set-key "\C-hg" 'magit-status)
+(global-set-key "\C-h\C-c" 'compile)
 
 (global-set-key (kbd "<f12>") 'clipboard-kill-ring-save)
 (global-set-key "\C-h\C-w"    'clipboard-kill-ring-save)
@@ -594,7 +611,15 @@ Spaces at the start of FILENAME (sans directory) are removed."
   (setq path-to-ctags "c:/opt/bin/ctags.exe"))
 
 
+;; https://emacs.stackexchange.com/questions/10722/emacs-and-command-line-path-disagreements-on-osx
 (setenv "PATH" (concat my:gopath ":" (getenv "PATH")))
+;; (setq my:path (concat
+;; 		 (replace-regexp-in-string "\r?\n$" ""
+;; 					   (shell-command-to-string "/opt/local/bin/bash -l -c \"echo $PATH\""))))
+
+;; "/Users/dhisel1/go/bin:/opt/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/Emacs.app/Contents/MacOS/bin-x86_64-10_14:/Applications/Emacs.app/Contents/MacOS/libexec-x86_64-10_14"
+
+;; PATH=/opt/local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/local/sbin:/Users/dhisel1/go/bin:/Users/dhisel1/bin:/Applications/Emacs.app/Contents/MacOS/bin-x86_64-10_14:/Applications/Emacs.app/Contents/MacOS/libexec-x86_64-10_14:/opt/kawa/bin:/opt/local/Library/Frameworks/Python.framework/Versions/3.7/bin:/Users/dhisel1/Library/Python/3.7/bin
 
 
 
@@ -613,4 +638,4 @@ Spaces at the start of FILENAME (sans directory) are removed."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (gitlab-ci-mode markdown-mode go-mode yaml-mode w3m terraform-mode sr-speedbar projectile nginx-mode mustache-mode mustache markdown-toc magit js2-mode hyperbole graphviz-dot-mode go-playground go-direx go-complete gitlab-ci-mode-flycheck gitlab fixmee edit-indirect dockerfile-mode dired-sidebar csv-mode buffer-move auto-complete ansible-vault ansible-doc ansible adoc-mode))))
+    (json-navigator geiser-kawa geiser groovy-mode dracula-theme gitlab-ci-mode markdown-mode go-mode yaml-mode w3m terraform-mode sr-speedbar projectile nginx-mode mustache-mode mustache markdown-toc magit js2-mode hyperbole graphviz-dot-mode go-playground go-direx go-complete gitlab-ci-mode-flycheck gitlab fixmee edit-indirect dockerfile-mode dired-sidebar csv-mode buffer-move auto-complete ansible-vault ansible-doc ansible adoc-mode))))
