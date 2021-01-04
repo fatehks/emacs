@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2019-01-10 19:04:58 davidh>
+;; Time-stamp: <2020-06-26 23:15:03 davidh>
 
 ;;; Commentary:
 
@@ -179,6 +179,14 @@
 			   :type github
 			   :pkgname "chrisbarrett/skeletor.el"
 			   :description "Powerful project skeletons for Emacs.  https://github.com/chrisbarrett/skeletor.el#usage")
+		;; (:name thinkscript
+		;;        :description "Thinkscript mode"
+		;;        :type github
+		;;        :website "https://github.com/gpellis/ThinkOrSwim.git"
+		;;        :pkgname "gpellis/ThinkOrSwim"
+		;;        :features "thinkscript"
+		;;        :compile "thinkscript.el")
+
 
 		;; (:name dracula-theme
 		;; 	   :website "https://github.com/dracula/emacs.git"
@@ -215,6 +223,7 @@
 				lua-mode
 				markdown-mode
 				erc-extras
+				;;thinkscript
 				;;helm
 				tail)
 			  (mapcar 'el-get-source-name el-get-sources)))
@@ -381,6 +390,9 @@ Spaces at the start of FILENAME (sans directory) are removed."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Modes, etc.
+
+;;; https://github.com/gpellis/ThinkOrSwim/blob/master/thinkscript.el
+;;(require 'thinkscript-mode)
 
 ;;; CPerl <http://www.emacswiki.org/cgi-bin/wiki/CPerlMode>
 (require 'cperl-mode)
