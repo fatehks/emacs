@@ -1,0 +1,1433 @@
+;; -*- coding: utf-8 -*-
+(("Recent Questions - Emacs Stack Exchange" "most recent 30 from emacs.stackexchange.com" nil (22714 2693 707829 0) feed 0 nil nil ((title ((type . "text")) "Recent Questions - Emacs Stack Exchange") (link ((rel . "self") (href . "http://emacs.stackexchange.com/feeds") (type . "application/atom+xml"))) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions") (type . "text/html"))) (subtitle nil "most recent 30 from emacs.stackexchange.com") (updated nil "2017-02-10T16:49:57Z") (id nil "http://emacs.stackexchange.com/feeds") (license nil "http://www.creativecommons.org/licenses/by-sa/3.0/rdf") (entry nil (id nil "http://emacs.stackexchange.com/q/30613") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "Adding/Modifying TODO keywords") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-mode"))) (author nil (name nil "Mike Anblips") (uri nil "http://emacs.stackexchange.com/users/9642")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/30613/adding-modifying-todo-keywords"))) (published nil "2017-02-10T16:22:47Z") (updated nil "2017-02-10T16:22:47Z") (summary ((type . "html")) "
+
+            <p>I just installed Emacs 25.1 for windows.
+I want to modify the TODO keyword list, and I use this code:</p>
+
+<pre><code> (setq org-todo-keywords
+  '((sequence \"TODO\"
+      \"MAYBE\"
+      \"NEXT\"
+      \"STARTED\"
+      \"WAITING\"
+      \"DELEGATED\"
+      \"|\"
+      \"DONE\"
+      \"DEFERRED\"
+      \"CANCELLED\")))
+</code></pre>
+
+<p>However, the TODO items keep cycling between the standard keywords.
+Strangely enough, if I check the variable 'org-todo-keywords from within the customization buffer, I do see all the keywords I've defined.</p>
+
+<p>Any hints on why the do not appear when cycling?</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/30612") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "dired function i wrote passes only current marked folder at point, can i send all marked folder?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "dired"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "functions"))) (author nil (name nil "zeltak") (uri nil "http://emacs.stackexchange.com/users/11387")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/30612/dired-function-i-wrote-passes-only-current-marked-folder-at-point-can-i-send-al"))) (published nil "2017-02-10T15:57:04Z") (updated nil "2017-02-10T15:57:04Z") (summary ((type . "html")) "
+
+            <p>i have this simple function i wrote (tbh i have zero coding skills.i gathered stuff from the web :)):</p>
+
+<pre><code>(defun z/dired-media-filebot (file)
+(interactive (list (expand-file-name (dired-file-name-at-point))))
+(start-process \"filebot\" nil \"filebot\" file))
+</code></pre>
+
+<p>problem is it always send only the current marked folder at point while i want to send all marked folders. How does one send all marked folders?</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/30607") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "how to correctly passing around function as parameters?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "style"))) (author nil (name nil "ninrod") (uri nil "http://emacs.stackexchange.com/users/12585")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/30607/how-to-correctly-passing-around-function-as-parameters"))) (published nil "2017-02-10T11:41:22Z") (updated nil "2017-02-10T16:42:30Z") (summary ((type . "html")) "
+
+            <p>I have a working snippet that advices both kill-buffer and kill-this-buffer to not kill the <em>scratch</em> buffer:</p>
+
+<pre><code>  (defun ninrod/scratch-bodyguard (buffer-assassin &amp;rest arguments)
+    (let ((buffer-to-kill (buffer-name (current-buffer))))
+      (if (equal buffer-to-kill \"*scratch*\")
+          (message \"DENIED! don't kill my precious *scratch*!!\")
+        (apply buffer-assassin arguments))))
+  (defun ninrod/scratch-protection (buffer-assassin &amp;rest arguments)
+    (let ((buffer-to-kill (car arguments)))
+      (if (equal buffer-to-kill \"*scratch*\")
+          (message \"DENIED! don't kill my precious *scratch*!!\")
+        (apply buffer-assassin arguments))))
+  (advice-add #'kill-this-buffer :around #'ninrod/scratch-bodyguard)
+  (advice-add #'kill-buffer :around #'ninrod/scratch-protection)
+</code></pre>
+
+<p>The problem is that these lines:</p>
+
+<pre><code>  (message \"DENIED! don't kill my precious *scratch*!!\")
+ (apply buffer-assassin arguments))))
+</code></pre>
+
+<p>Are repeated in both functions, so I thought that I could apply the DRY principle and refactor the snippet to this:</p>
+
+<pre><code>(defun ninrod--protection (buffer-assassin buffer-to-kill &amp;rest arguments)
+  (if (equal buffer-to-kill \"*scratch*\")
+      (message \"DENIED! don't kill my precious *scratch*!!\")
+    (apply buffer-assassin arguments)))
+(defun ninrod/scratch-bodyguard (buffer-assassin &amp;rest arguments)
+  (let ((buffer-to-kill (buffer-name (current-buffer))))
+    (ninrod--protection 'buffer-assassin buffer-to-kill arguments)))
+(defun ninrod/scratch-protection (buffer-assassin &amp;rest arguments)
+  (let ((buffer-to-kill (car arguments)))
+    (ninrod--protection 'buffer-assassin buffer-to-kill arguments)))
+(advice-add #'kill-this-buffer :around #'ninrod/scratch-bodyguard)
+(advice-add #'kill-buffer :around #'ninrod/scratch-protection)
+</code></pre>
+
+<p>This causes all hell to break loose. Now I can't even close emacs, because apparently emacs tries to kill all buffers
+and as I've just tampered with the kill buffer functions, well, it's bad. Very bad.</p>
+
+<p>I know I mean well, but I'm must be doing something very stupid. For starters, I don't know if I can really pass around
+functions as parameters? So it could be that?</p>
+
+<p>How would you refactor that snippet to apply the dry principle?</p>
+
+<p>edit:</p>
+
+<p>this works: </p>
+
+<pre><code>(defun ninrod--protection (buffer-assassin buffer-to-kill &amp;rest arguments)
+  (if (equal buffer-to-kill \"*scratch*\")
+      (message \"DENIED! don't kill my precious *scratch*!!\")
+    (apply buffer-assassin arguments)))
+
+(defun ninrod/scratch-bodyguard (buffer-assassin &amp;rest arguments)
+  (let ((buffer-to-kill (buffer-name (current-buffer))))
+    (ninrod--protection 'buffer-assassin buffer-to-kill arguments)))
+
+(advice-add #'kill-this-buffer :around #'ninrod/scratch-bodyguard)
+</code></pre>
+
+<p>so the problem lies exactly here:</p>
+
+<pre><code>(defun ninrod/scratch-protection (buffer-assassin &amp;rest arguments)
+  (let ((buffer-to-kill (car arguments)))
+    (ninrod--protection 'buffer-assassin buffer-to-kill arguments)))
+</code></pre>
+
+<p>edit2: quoting or unquoting the function <code>buffer-assassin</code> does not make a difference</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/30605") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "Is it possible to keep syntax highlighting in ediff buffers?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "ediff"))) (author nil (name nil "evpav") (uri nil "http://emacs.stackexchange.com/users/14868")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/30605/is-it-possible-to-keep-syntax-highlighting-in-ediff-buffers"))) (published nil "2017-02-10T11:09:30Z") (updated nil "2017-02-10T11:09:30Z") (summary ((type . "html")) "
+
+            <p>Is it possible to keep syntax highlighting in ediff buffers?
+For example this is how it looks in VSCode <a href=\"https://i.stack.imgur.com/VkuME.png\" rel=\"nofollow noreferrer\"><img src=\"https://i.stack.imgur.com/VkuME.png\" alt=\"enter image description here\"></a></p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/30604") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "Enforcement of customization types") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "customize"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "customization"))) (author nil (name nil "Tianxiang Xiong") (uri nil "http://emacs.stackexchange.com/users/10269")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/30604/enforcement-of-customization-types"))) (published nil "2017-02-10T06:59:02Z") (updated nil "2017-02-10T06:59:02Z") (summary ((type . "html")) "
+
+            <p>When specifying a customizable variable <code>foo-paths</code> as follows:</p>
+
+<pre class=\"lang-el prettyprint-override\"><code>(defcustom foo-paths nil
+  \"Paths for foo-related things.\"
+  :group 'foo
+  :options '(foo-1 foo-2)
+  :type '(alist :key-type symbol :value-type (file :must-match t)))
+</code></pre>
+
+<p>There doesn't seem to be any enforcement of the value type in the Customize interface. I can enter any text I want for the values, not just a file (let alone an <em>existing</em> file).</p>
+
+<p>Am I missing something here? The <a href=\"https://www.gnu.org/software/emacs/manual/html_node/elisp/Simple-Types.html#Simple-Types\" rel=\"nofollow noreferrer\">manual</a> says:</p>
+
+<blockquote>
+  <p><strong>(file :must-match t)</strong></p>
+  
+  <p>The value must be a file name for an existing file. The widget provides completion.</p>
+</blockquote>
+
+<p>What completion is the widget providing? I don't see any; all I see is a plain text box.</p>
+
+<p>I'm using Emacs 25.1.1.</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/30603") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "Customizable variable of predefined keys") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "customize"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "customization"))) (author nil (name nil "Tianxiang Xiong") (uri nil "http://emacs.stackexchange.com/users/10269")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/30603/customizable-variable-of-predefined-keys"))) (published nil "2017-02-10T06:52:20Z") (updated nil "2017-02-10T06:52:20Z") (summary ((type . "html")) "
+
+            <p>I'd like to create a customizable variable <code>foo-paths</code> with certain options. </p>
+
+<pre class=\"lang-el prettyprint-override\"><code>(defcustom foo-paths nil
+  \"Paths for foo-related things.\"
+  :group 'foo
+  :options '(foo-1 foo-2)
+  :type '(alist :key-type symbol :value-type (file :must-match t)))
+</code></pre>
+
+<p>I'd like for the user to <em>only</em> be able to provide values for the specified keys in <code>:options</code>, not to add new options. </p>
+
+<p>The <a href=\"https://www.gnu.org/software/emacs/manual/html_node/elisp/Composite-Types.html#Composite-Types\" rel=\"nofollow noreferrer\">manual</a> doesn't offer a way to do this--the user can add new elements to the alist through the Customize interface.</p>
+
+<p>Is there a way to achieve this? The functionality may not be impacted by the addition of new alist elements, but it seems strange that there's no way to specify a variable that has certain options and <em>only</em> those options.</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/30602") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "use nonstandard `.git` directory with magit") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "magit"))) (author nil (name nil "nbren12") (uri nil "http://emacs.stackexchange.com/users/14865")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/30602/use-nonstandard-git-directory-with-magit"))) (published nil "2017-02-10T06:11:36Z") (updated nil "2017-02-10T11:43:09Z") (summary ((type . "html")) "
+
+            <p>I have been using the setup described on the top comment  <a href=\"https://news.ycombinator.com/item?id=11070797\" rel=\"nofollow noreferrer\">here</a> to manage my dotfiles using git. In short, I have this in my .bashrc:</p>
+
+<pre><code>alias config='/usr/bin/env git --git-dir=$HOME/.myconf/ --work-tree=$HOME'
+</code></pre>
+
+<p>I then can run any git command using <code>config add &lt;file&gt;</code>, etc. Is there anyway to get this working with magit, so I can commit changes to my configuration files without dropping into a shell?</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/30597") (rank ((scheme . "http://emacs.stackexchange.com")) "1") (title ((type . "text")) "how to make org-mode section numbers start counting from 0 instead of 1?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-mode"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-export"))) (author nil (name nil "zotherstupidguy") (uri nil "http://emacs.stackexchange.com/users/14744")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/30597/how-to-make-org-mode-section-numbers-start-counting-from-0-instead-of-1"))) (published nil "2017-02-10T00:18:05Z") (updated nil "2017-02-10T00:58:40Z") (summary ((type . "html")) "
+
+            <p>org-mode section numbers (when exported to html) by default starts count from 1, however it is traditional in computer science to start counting from zero. How to make org-mode section numbers start counting from 0 instead of 1?</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/30596") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "org-mode how to increase all headers in org file?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-mode"))) (author nil (name nil "kevzettler") (uri nil "http://emacs.stackexchange.com/users/12732")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/30596/org-mode-how-to-increase-all-headers-in-org-file"))) (published nil "2017-02-10T00:15:40Z") (updated nil "2017-02-10T00:40:17Z") (summary ((type . "html")) "
+
+            <p>How can I increase the level of all headers in an org doc? example:</p>
+
+<pre><code> * Top header
+ ** Sub header
+ *** Sub sub header
+</code></pre>
+
+<p>To :</p>
+
+<pre><code>** Top header
+*** Sub Header
+**** Sub sub header
+</code></pre>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/30595") (rank ((scheme . "http://emacs.stackexchange.com")) "1") (title ((type . "text")) "How to Org Capture at current location?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-capture"))) (author nil (name nil "Shambho") (uri nil "http://emacs.stackexchange.com/users/13502")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/30595/how-to-org-capture-at-current-location"))) (published nil "2017-02-10T00:08:06Z") (updated nil "2017-02-10T00:38:19Z") (summary ((type . "html")) "
+
+            <p>I have successfully used org-capture, and have many templates.</p>
+
+<p>Recently I have written a new template, where I want the target to be the location from where I am calling the capture command.</p>
+
+<p>I have tried many things, and the only way I have been able to get it to work is using the <em>Target location:</em> <code>Current clocking task:</code>. This works just the way I like, except for the fact that I have to start clocking in order to capture.</p>
+
+<p>Is there a way I can still gain the same functionality, without the need for clocking?</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/30592") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "byte compile warning: `unintern` called with 1 argument, but requires 2") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "byte-compilation"))) (author nil (name nil "lawlist") (uri nil "http://emacs.stackexchange.com/users/2287")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/30592/byte-compile-warning-unintern-called-with-1-argument-but-requires-2"))) (published nil "2017-02-09T19:33:06Z") (updated nil "2017-02-09T20:09:39Z") (summary ((type . "html")) "
+
+            <p><strong>Q</strong>:  How to fix <code>elmo-unintern</code> to use 2 arguments instead of 1, or silence the byte-compiler on this issue.</p>
+
+<p>Here is the macro definition:</p>
+
+  <pre class=\"lang-lisp prettyprint-override\"><code>(defmacro elmo-unintern (string)
+\"Delete the symbol named NAME, if any, from OBARRAY.
+The value is t if a symbol was found and deleted, nil otherwise.
+NAME may be a string or a symbol.  If it is a symbol, that symbol
+is deleted, if it belongs to OBARRAY--no other symbol is deleted.
+OBARRAY, if nil, defaults to the value of the variable `obarray'.\"
+  (static-if (fboundp 'unintern)
+      (list 'unintern string)))
+</code></pre>
+
+<p>Here is the bye-compile message:</p>
+
+<pre><code>In elmo-imap4-parse-response:
+
+filename.el:92495:45:Warning: unintern called with 1 argument, but requires 2
+
+filename.el:92513:46:Warning: unintern called with 1 argument, but requires 2
+
+filename.el:92516:38:Warning: unintern called with 1 argument, but requires 2
+</code></pre>
+
+<p>Here is the comment by @Stefan from a previous bug report:  <a href=\"https://lists.gnu.org/archive/html/bug-gnu-emacs/2015-04/msg00560.html\" rel=\"nofollow noreferrer\">https://lists.gnu.org/archive/html/bug-gnu-emacs/2015-04/msg00560.html</a></p>
+
+<pre><code>&gt; Loading this file works as expected, but compiling it generates the
+&gt; warning
+&gt;     unintern called with 1 argument, but requires 2
+&gt; But `unintern' doesn't require 2 arguments.
+
+That's the `advertized-calling-convention' at work here.  IOW calling
+the function with only one argument still works but is deprecated.
+
+        Stefan
+</code></pre>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/30591") (rank ((scheme . "http://emacs.stackexchange.com")) "3") (title ((type . "text")) "How to have desktop-mode restore only the <n> most recently used buffers") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "desktop"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "session"))) (author nil (name nil "Lee H") (uri nil "http://emacs.stackexchange.com/users/379")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/30591/how-to-have-desktop-mode-restore-only-the-n-most-recently-used-buffers"))) (published nil "2017-02-09T19:21:11Z") (updated nil "2017-02-09T19:21:11Z") (summary ((type . "html")) "
+
+            <p>I currently have in my config:</p>
+
+<pre><code>(desktop-save-mode 1)
+(setq desktop-restore-eager 10)
+</code></pre>
+
+<p>Which on startup, will eagerly restore 10 buffers, and then when Emacs is idle,
+restore all the others.</p>
+
+<p>Is there a way I can tell Emacs \"I want you to restore the most recently used 10
+buffers, and then don't restore any others\"?</p>
+
+<p>Right now it seems like the options are either eagerly restoring every buffer,
+or eagerly restoring a subset and then lazily restoring every other buffer.</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/30587") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "Web-mode uses 1 space indent instead of 2") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "web-mode"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "html"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "javascript"))) (author nil (name nil "Krzysztof Żuraw") (uri nil "http://emacs.stackexchange.com/users/14862")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/30587/web-mode-uses-1-space-indent-instead-of-2"))) (published nil "2017-02-09T17:22:56Z") (updated nil "2017-02-09T19:03:12Z") (summary ((type . "html")) "
+
+            <p>I have this config in my init.el:</p>
+
+<pre><code>(setq-default indent-tabs-mode nil)
+(add-to-list 'auto-mode-alist '(\"\\\\.html?\\\\'\" . web-mode))
+(defun my-web-mode-hook ()
+  \"Hooks for Web mode.\"
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq web-mode-code-indent-offset 4)
+  (setq web-mode-enable-auto-pairing t)
+  (setq web-mode-enable-auto-closing t)
+  (setq web-mode-enable-current-element-highlight t)
+  (setq web-mode-enable-current-column-highlight t)
+)
+(add-hook 'web-mode-hook  'my-web-mode-hook)
+</code></pre>
+
+<p>And when I have script tag I only have javascript code indented by 1 space instead of 2. Is there a way to fix that?</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/30579") (rank ((scheme . "http://emacs.stackexchange.com")) "4") (title ((type . "text")) "Derived mode without merging keymap") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "major-mode"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "keymap"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "derived-mode"))) (author nil (name nil "Tianxiang Xiong") (uri nil "http://emacs.stackexchange.com/users/10269")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/30579/derived-mode-without-merging-keymap"))) (published nil "2017-02-09T09:06:24Z") (updated nil "2017-02-10T14:12:09Z") (summary ((type . "html")) "
+
+            <p>It seems that when using <code>define-derived-mode</code>, the new mode's keymap is merged with that of the parent mode. Is there a way to avoid this? That is, to inherit font-lock, etc. from the parent mode, but have a completely new keymap.</p>
+
+<p>E.g.</p>
+
+<pre class=\"lang-el prettyprint-override\"><code>(defvar foo-mode-map
+  (let ((map (copy-keymap special-mode-map)))
+    (define-key map (kbd \"n\") #'next-line)
+    (define-key map (kbd \"p\") #'previous-line)
+    map)
+  \"Keymap for foo-mode.\")
+
+(define-derived-mode foo-mode java-mode \"Foo\"
+  \"Major mode derived from `java-mode'.
+
+\\\\{foo-mode-map}\")
+</code></pre>
+
+<p>I'd like <code>foo-mode</code> to use <code>foo-mode-map</code> without any key sequences from <code>java-mode-map</code>.</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/30332") (rank ((scheme . "http://emacs.stackexchange.com")) "2") (title ((type . "text")) "Evil-leader stops working when I eval-buffer") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "evil"))) (author nil (name nil "Daniel Satanove") (uri nil "http://emacs.stackexchange.com/users/14759")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/30332/evil-leader-stops-working-when-i-eval-buffer"))) (published nil "2017-01-31T20:39:28Z") (updated nil "2017-02-10T15:15:51Z") (summary ((type . "html")) "
+
+            <p>If I load up emacs and go to my .emacs file (a fragment of which is given below), and I press SPC f or C-c C-f then it does find-file, which is the expected behaviour. However, if I type M-x eval-buffer, or load-file, suddenly SPC f doesn't work, but C-c C-f still does. If I press SPC, it just goes to the next character as it would without evil-leader. What gives?</p>
+
+<pre><code>(require 'evil) 
+(evil-mode 1)
+
+(require 'evil-leader)
+(global-evil-leader-mode)
+
+(evil-leader/set-leader \"&lt;SPC&gt;\")
+
+(evil-leader/set-key \"f\" 'find-file)
+</code></pre>
+
+<p>(x-posted from superuser.com)</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/29939") (rank ((scheme . "http://emacs.stackexchange.com")) "1") (title ((type . "text")) "C/C++ coding in Emacs org-mode's babel") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-mode"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-babel"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "c"))) (author nil (name nil "147pm") (uri nil "http://emacs.stackexchange.com/users/8349")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/29939/c-c-coding-in-emacs-org-modes-babel"))) (published nil "2017-01-11T01:57:33Z") (updated nil "2017-02-10T07:37:01Z") (summary ((type . "html")) "
+
+            <p>I'm not finding a lot of examples/documentation for the non-REPL world of C/C++ in Emacs org-mode babel. For example, is there a way to break a program up into separate source code blocks, i.e., a block for <code>main</code>, then separate blocks for its <code>func1</code>, <code>func2</code>, ... called by <code>main</code>? Or, is there any way to have just a stand-alone function <code>lonefunc</code> in a block, then call it from another place? I suppose this is all a form of literate programming, but typically you're pulling it all together with tangling. I'd like not to tangle, but have things running in the org-mode session.</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/29933") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "Is there a way to save tramp targets and then incrementally filter them with Helm?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "helm"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "tramp"))) (author nil (name nil "z_Zelman") (uri nil "http://emacs.stackexchange.com/users/14501")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/29933/is-there-a-way-to-save-tramp-targets-and-then-incrementally-filter-them-with-hel"))) (published nil "2017-01-10T20:22:02Z") (updated nil "2017-02-10T14:43:10Z") (summary ((type . "html")) "
+
+            <p>Say I want to open new connections to <code>superlongusername1@superlongdomain1.org</code>, <code>superlongusername2@superlongdomain2.org</code> and <code>superlongusername3@superlongdomain3.org</code> frequently, but I don't want to type each one every time. It would be nice if the target was saved the on the first successful connection and then presented to me as an option for ever connection thereafter which then could be incrementally filtered with Helm.</p>
+
+<p>By analogy, it would be very similar to <code>helm-recentf</code> but instead of the file names they would be tramp targets.</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/29920") (rank ((scheme . "http://emacs.stackexchange.com")) "1") (title ((type . "text")) "Is it possible to change the font size in specific buffers?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "buffers"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "fonts"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "customize"))) (author nil (name nil "Veera") (uri nil "http://emacs.stackexchange.com/users/12612")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/29920/is-it-possible-to-change-the-font-size-in-specific-buffers"))) (published nil "2017-01-10T11:40:56Z") (updated nil "2017-02-10T12:43:01Z") (summary ((type . "html")) "
+
+            <p>I would like to have different font sizes for the buffer windows in Emacs. That is, I would like to have a bigger font in the buffer where i write the code, and a smaller font in the buffer where i use the term to browse and run the scripts. Is it possible ?</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/29902") (rank ((scheme . "http://emacs.stackexchange.com")) "1") (title ((type . "text")) "More detailed description of how to set-up org-file-apps for orgmode 9.0") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-mode"))) (author nil (name nil "brittUWaterloo") (uri nil "http://emacs.stackexchange.com/users/8231")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/29902/more-detailed-description-of-how-to-set-up-org-file-apps-for-orgmode-9-0"))) (published nil "2017-01-09T13:54:24Z") (updated nil "2017-02-10T02:45:55Z") (summary ((type . "html")) "
+
+            <p>The <a href=\"http://orgmode.org/Changes.html\" rel=\"nofollow noreferrer\">release notes</a> for the changed method of specifing how to open links in org files say that <code>org-file-apps</code> no longer accepts an S-expression but you need to put in a function (and gives an example with a lambda). But the example does not escape any quotes, nor explain what is the \"file\" and what is the \"link\" that are being passed to this function. </p>
+
+<p>I have noticed that libreoffice .ods files are opening up in emacs, and not being opened by libreoffice, but I cannot figure out how to add a case to org-file-apps to do this successfully.</p>
+
+<p>General question: please explain the new methods for org-file-apps orgmode v 9.0 with more detail. Specific question: assuming /usr/bin/libreoffice exists, what should the addition to org-file-apps be to get libreoffice to launch a file with extension .ods rather than open it up in emacs.</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/29664") (rank ((scheme . "http://emacs.stackexchange.com")) "4") (title ((type . "text")) "How to do paredit-kill backwards?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "paredit"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "deletion"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "killing"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "delimiters"))) (author nil (name nil "GDP2") (uri nil "http://emacs.stackexchange.com/users/10761")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/29664/how-to-do-paredit-kill-backwards"))) (published nil "2016-12-29T08:52:59Z") (updated nil "2017-02-09T21:59:36Z") (summary ((type . "html")) "
+
+            <p>Most everyone who uses <code>paredit</code> has used <code>paredit-kill</code> (i.e., <code>C-k</code>), which allows one to delete a line forwards whilst keeping delimiters balanced properly. But how does one do this in the reverse direction? When one does <code>C-0 C-k</code>, <a href=\"http://emacsredux.com/blog/2013/04/08/kill-line-backward/\" rel=\"nofollow noreferrer\">which is something that's typically used to kill the line backwards</a>, <code>paredit-kill</code> actually calls the built-in <code>kill-line</code> to handle it. Unfortunately, this loses the delimiter-balancing that is otherwise had with <code>paredit-kill</code>. Since discovering that <code>C-0 C-k</code> does not work quite right, I've tried implementing a <code>paredit-backward-kill-line</code> function that will kill backwards <em>and</em> balance delimiters a la <code>paredit-kill</code>. However, I've not had much luck with this and have only come up with an implementation which uses <code>paredit-backward-delete</code> under certain conditions. This solution has only worked marginally well for me thus far. I've also tried reworking some of <code>paredit</code>'s functions that relate to killing lines, but it seems that they are all hard-coded to work with forwards deletion. This is making certain functions here significantly difficult to rework.</p>
+
+<p>All in all, this seems like a lot of work to get something working that seems like it should be relatively simple, given that <code>paredit</code> already works as well as it does. So, I guess my question is: is there a way to do a backwards <code>paredit-kill</code> which retains all the delimiter-balancing functionality that is had from a normal, forwards <code>paredit-kill</code>?</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/28608") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "How do I edit files on an SFTP server, connecting from Mac OS X?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "tramp"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "sftp"))) (author nil (name nil "purple_arrows") (uri nil "http://emacs.stackexchange.com/users/372")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/28608/how-do-i-edit-files-on-an-sftp-server-connecting-from-mac-os-x"))) (published nil "2016-11-11T19:18:23Z") (updated nil "2017-02-10T11:41:34Z") (summary ((type . "html")) "
+
+            <p>At work I'm connecting to a server that only accepts SFTP connections.  I can connect from the command line just fine.  I'd like to use TRAMP or Ange-FTP or something similar from within Emacs, but I'm stuck.</p>
+
+<p>When I say <code>C-x C-f /sftp:user@host:</code> I expect to get a prompt for a password but instead I get back <code>Unknown method \"sftp\"</code> in the echo area.  </p>
+
+<p>I'm using the TRAMP that came with Emacs, and I notice that <code>tramp-methods</code> does not contain anything for sftp.  Do I need to add something there?</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/27735") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "Some UTF-8 characters break my ansi-term. How to fix it?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "ansi-term"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "utf-8"))) (author nil (name nil "MatthewRock") (uri nil "http://emacs.stackexchange.com/users/405")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/27735/some-utf-8-characters-break-my-ansi-term-how-to-fix-it"))) (published nil "2016-10-11T17:14:11Z") (updated nil "2017-02-10T16:45:16Z") (summary ((type . "html")) "
+
+            <p>I've got a script that generates some output. Some parts of the output are cyrillic letters, and they cause my <code>ansi-term</code> to break - I guess they are treated as control characters(they are displayed like <code>\\320\\272</code>, and this makes me restart the ansi-term hoping it won't happen again(that I skip this part of output). However, this isn't a fix, but a hack.</p>
+
+<p>How can I make these characters appear correctly/not break my con</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/27214") (rank ((scheme . "http://emacs.stackexchange.com")) "3") (title ((type . "text")) "How can I increase the spacing between the buffer and the top part of the frame?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "init-file"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "window"))) (author nil (name nil "Danchm01") (uri nil "http://emacs.stackexchange.com/users/13361")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/27214/how-can-i-increase-the-spacing-between-the-buffer-and-the-top-part-of-the-frame"))) (published nil "2016-09-20T17:50:19Z") (updated nil "2017-02-10T06:31:20Z") (summary ((type . "html")) "
+
+            <p>I'd like to add a margin to the top of the window so that it's not so close to the top part of the frame.</p>
+
+<p>Here's what it looks like currently (arrow indicates where I'd like to add extra margin):
+<a href=\"https://i.stack.imgur.com/1prvV.png\" rel=\"nofollow noreferrer\"><img src=\"https://i.stack.imgur.com/1prvV.png\" alt=\"enter image description here\"></a></p>
+
+<p>How would I go about accomplishing this?</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/27032") (rank ((scheme . "http://emacs.stackexchange.com")) "2") (title ((type . "text")) "How can I move by screen lines as quickly as forward-line?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "motion"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "linum-mode"))) (author nil (name nil "Jack CC") (uri nil "http://emacs.stackexchange.com/users/12892")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/27032/how-can-i-move-by-screen-lines-as-quickly-as-forward-line"))) (published nil "2016-09-12T13:11:38Z") (updated nil "2017-02-10T01:27:44Z") (summary ((type . "html")) "
+
+            <p><code>next-line</code> is very slow, and this is creating problems. I'll give some background then explain why.</p>
+
+<p>By default, linum.el treats a wrapped line as a single line, and it takes into account hidden lines when numbering. I need it to number visual lines only - i.e. it should ignore hidden lines, and count wrapped lines as multiple lines.</p>
+
+<p>For example, this is how it works by default:</p>
+
+<pre><code>1 This is a line.
+2 This is a long line which has been auto-wrapped
+ &gt;by emacs.
+3 This is another line.
+</code></pre>
+
+<p>This is the behaviour I want:</p>
+
+<pre><code>1 This is a line.
+2 This is a long line which has been auto-wrapped
+3&gt;by emacs.
+4 This is another line.
+</code></pre>
+
+<p>I have this behaviour working, but it's very slow. By default, linum.el uses <code>forward-line</code> to number each line. This is the code that actually moves down by one line and increments the line counter:</p>
+
+<pre class=\"lang-el prettyprint-override\"><code>(let ((inhibit-point-motion-hooks t))
+  (forward-line))
+(setq line (1+ line))
+</code></pre>
+
+<p>I modified it to use <code>next-line</code>:</p>
+
+<pre class=\"lang-el prettyprint-override\"><code>(let ((inhibit-point-motion-hooks t))
+  ;; (forward-line)
+  (next-line))
+(setq line (1+ line))
+</code></pre>
+
+<p>This works, but <code>next-line</code> is very slow in comparison to <code>forward-line</code>. Line numbers must be updated frequently so this slows down Emacs considerably. </p>
+
+<p>I don't actually <em>need</em> to number every line. I am happy to use <code>forward-line</code> and number only the beginning of lines, as so:</p>
+
+<pre><code>1 This is a line.
+2 This is a long line which has been auto-wrapped
+ &gt;by emacs.
+4 This is another line.
+</code></pre>
+
+<p>But if I want to do this, I need to be able to check how many <em>screen</em> lines I moved when I called <code>forward-line</code>.</p>
+
+<p>Does anyone have any ideas on how to solve this?</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/23764") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "Extending Go function arguments show hotkey") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "golang"))) (author nil (name nil "Spouk") (uri nil "http://emacs.stackexchange.com/users/12283")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/23764/extending-go-function-arguments-show-hotkey"))) (published nil "2016-06-05T14:45:39Z") (updated nil "2017-02-10T13:40:19Z") (summary ((type . "html")) "
+
+            <p>how to add the ability to bind a hotkey to display the function's arguments? Is it even possible?</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/21584") (rank ((scheme . "http://emacs.stackexchange.com")) "3") (title ((type . "text")) "Can emacs be used for the same purpose of GNU Screen and Tmux?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "process"))) (author nil (name nil "Tim") (uri nil "http://emacs.stackexchange.com/users/120")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/21584/can-emacs-be-used-for-the-same-purpose-of-gnu-screen-and-tmux"))) (published nil "2016-04-12T14:11:32Z") (updated nil "2017-02-10T07:15:45Z") (summary ((type . "html")) "
+
+            <p>GNU Screen and Tmux can make processes survive user's logging out, and resume when logging back again.</p>
+
+<p>Can Emacs be used for the same purpose, and how?</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/19850") (rank ((scheme . "http://emacs.stackexchange.com")) "4") (title ((type . "text")) "How to achieve dynamic projects without fixed paths for publishing from Org mode?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-mode"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-publish"))) (author nil (name nil "mlt") (uri nil "http://emacs.stackexchange.com/users/6665")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/19850/how-to-achieve-dynamic-projects-without-fixed-paths-for-publishing-from-org-mode"))) (published nil "2016-01-26T19:17:26Z") (updated nil "2017-02-10T09:41:23Z") (summary ((type . "html")) "
+
+            <p>One usually adds entries to <code>org-publish-project-alist</code> to describe what and how needs to be published, including <code>:publishing-directory</code>, fancy <code>:publishing-function</code> and alike. However it seems handy for some projects to reside in version controlled repository with all that it entails, i.e. different users, different checkout paths. My problem is that I cannot wrap my head around how would I go about making it all flexible.</p>
+
+<p>I'd like everything to go by a \"standard\" project name no matter what repository clone I'm in, i.e. if I have multiple cloned copies of my repository, I'd like to have same project name while exporting files from subfolders. And I'd like for an export to take place, e.g. to a sibling folder, i.e. not some hard-coded paths.</p>
+
+<p>It seems that <code>.dir-locals.el</code> is the way to go. But it is getting gnarly with on the fly evaluation of various path names, etc and I have to mark variable and values as safe. But minor changes cause pollution of <code>safe-local-variable-values</code> in my <code>custom-file</code>.</p>
+
+<p>Is there a canonical way on how to achieve such setups in general?</p>
+
+<p><strong>Update:</strong>
+Currently, I'm having a custom function that overrides quite many things (starting with looking up a working repository copy root containing <code>.git</code>) on a global scale with <code>setq</code> and this function is wrapped into a minor mode. It is still somewhat broken (autoload part) due to my knowledge (or lack thereof) of Elisp so I have to re-evaluate the file as some variables aren't set right. And a huge shortcoming is that I have to restart Emacs to get variables back to their original values as it is too many of them that I change (like <code>org-twbs-tag-class-prefix</code>, <code>org-twbs-format-headline-function</code>, <code>org-latex-classes</code>, <code>org-babel-default-header-args:dot</code> and more).</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/19566") (rank ((scheme . "http://emacs.stackexchange.com")) "1") (title ((type . "text")) "ange-ftp problem on cygwin emacs") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "microsoft-windows"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "ftp"))) (author nil (name nil "D Strozzi") (uri nil "http://emacs.stackexchange.com/users/10788")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/19566/ange-ftp-problem-on-cygwin-emacs"))) (published nil "2016-01-15T19:58:51Z") (updated nil "2017-02-09T23:27:41Z") (summary ((type . "html")) "
+
+            <p>I've hit a brick wall with this.  I'm running cygwin on a Windows 7 machine.  I can't connect vai ange-ftp to an ftp server, hosted by godaddy.com.  I do C-x C-f /username@ftp.foo.com: (to get a dir listing) or :index.html (file exists), and in both cases emacs asks me for my password, I enter it, and then emacs freezes.  Hard freezes - only way to kill it is to use Task Manager, and kill two emacs-w32 processes.</p>
+
+<p>I'm using the cygwin emacs-w32 program.</p>
+
+<p>My .emacs includes (require 'cygwin-mount).  I also tried (require 'setup-cygwin) (downloaded most recent version today), but that doesn't load properly.  Error about \"cannot find cygwin\", having to do with a variable that sets the path to cygwin.  I couldn't figure it out so commented out (require 'setup-cygwin).</p>
+
+<p>So - suggestions?  Could this relate to what ftp client emacs / ange-ftp is finding?  Other things about my emacs setup for cygwin?  I've been using cygwin emacs for about 6 months and most other things work, including running processes from within emacs (shell, tex, grep, diff, etc).</p>
+
+<p>Thanks.</p>
+
+<p>Here's the result of emacs-w32 --debug-init with (require 'steup-cygwin) in my .emacs.  Alas I can't give any error info on the actual ange-ftp issue, since emacs just freezes.</p>
+
+<p>Debugger entered--Lisp error: (wrong-type-argument stringp nil)
+  file-directory-p(nil)
+  (and (file-directory-p directory) (file-readable-p directory) directory)
+  setcyg-dir-p(nil)
+  (if (setcyg-dir-p cygwin-root-directory) nil (error \"Cannot find Cygwin.  Please customize option `cygwin-root-directory'\"))
+  eval-buffer(# nil \"/cygdrive/c/Users/strozzi2/.emacs.d/lisp/setup-cygwin.el\" nil t)  ; Reading at buffer position 4972
+  load-with-code-conversion(\"/cygdrive/c/Users/strozzi2/.emacs.d/lisp/setup-cygwin.el\" \"/cygdrive/c/Users/strozzi2/.emacs.d/lisp/setup-cygwin.el\" nil t)
+  require(setup-cygwin)
+  eval-buffer(# nil \"/cygdrive/c/Users/strozzi2/.emacs\" nil t)  ; Reading at buffer position 1708
+  load-with-code-conversion(\"/cygdrive/c/Users/strozzi2/.emacs\" \"/cygdrive/c/Users/strozzi2/.emacs\" t t)
+  load(\"~/.emacs\" t t)
+  #[0 \"\\205\\262</p>
+
+<p>**** With new setup-cygwin.el from Drew, it behaves as he said.  The relevant part of .emacs is:</p>
+
+<p>(require 'cygwin-mount)
+(setq cygwin-root-directory \"/c/cygdrive/cygwin64/\")
+(require 'setup-cygwin)</p>
+
+<p>Startup now works.  C:/cygwin64/ didn't.</p>
+
+<p>And ange-ftp works!  Once I put ftp in passive mode to get around firewall.  Success!</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/14366") (rank ((scheme . "http://emacs.stackexchange.com")) "2") (title ((type . "text")) "How to make persistent buffer list above frame like in vim powerline") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "buffers"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "vim-emulation"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "powerline"))) (author nil (name nil "sandric") (uri nil "http://emacs.stackexchange.com/users/9056")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/14366/how-to-make-persistent-buffer-list-above-frame-like-in-vim-powerline"))) (published nil "2015-07-30T22:02:07Z") (updated nil "2017-02-10T05:31:15Z") (summary ((type . "html")) "
+
+            <p>I want to implement behavior similar to mine vim config, where all basic info was below the main frame, like modes, position in file, changes, but above the frame is list of all buffers, with separated by color active buffer for active window. Is it possible to do somehow? thx. Can you suggest some plugins or scripts implementing similar behavior?</p>
+
+        ")) (entry nil (id nil "http://emacs.stackexchange.com/q/9872") (rank ((scheme . "http://emacs.stackexchange.com")) "4") (title ((type . "text")) "Hide inline images and show links in org-mode") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-mode"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "images"))) (author nil (name nil "Madhavan Kumar") (uri nil "http://emacs.stackexchange.com/users/5383")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/9872/hide-inline-images-and-show-links-in-org-mode"))) (published nil "2015-03-07T06:22:21Z") (updated nil "2017-02-10T08:41:26Z") (summary ((type . "html")) "
+
+            <p>On using an image link as,</p>
+
+<pre><code>[[./hello.png]]
+</code></pre>
+
+<p>in <code>org-mode</code>, emacs doesn't toggle the inline image display. <code>org-toggle-inline-images</code> works well on start-up. I run a presentation using <code>M-x epresent-run</code> <a href=\"https://github.com/eschulte/epresent\" rel=\"nofollow noreferrer\">epresent</a> and come back to edit mode from the presentation mode by pressing <code>q</code>. Then the image display stops toggling.</p>
+
+<h1>What I get after quitting <code>epresent-mode</code>:</h1>
+
+<p><img src=\"https://i.stack.imgur.com/tVUqZ.png\" alt=\"image-display-on\"></p>
+
+<h1>What I want:</h1>
+
+<p><img src=\"https://i.stack.imgur.com/Ns9Cd.png\" alt=\"enter image description here\"></p>
+
+<p>This behavior is seen after I get into presentation mode using <a href=\"https://github.com/eschulte/epresent\" rel=\"nofollow noreferrer\">epresent</a> and come back to edit mode by pressing <code>q</code>.</p>
+
+        ")))) ("How to start python shell in appropriate working directory?" "<p>If I am editing a python file, and start a python shell using <code>elpy-shell-switch-to-shell</code> the process appears to set the working directory as the containing directory of the file.</p>
+<p>However, the file itself is in a subfolder of a git repo. So, I would expect the working directory to be that of the containing .git directory.</p>
+<p>I set the project root directory using <code>elpy-set-project-root</code> but that didn't seem to change the behaviour of <code>elpy-shell-switch-to-shell</code>.</p>
+<p>What am I doing wrong here?</p>" "http://emacs.stackexchange.com/questions/31203/how-to-start-python-shell-in-appropriate-working-directory" (22713 36696) old 4 nil nil ((guid nil "http://emacs.stackexchange.com/q/31203") (id nil "http://emacs.stackexchange.com/q/31203") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "How to start python shell in appropriate working directory?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "python"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "shell"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "elpy"))) (author nil (name nil "cammil") (uri nil "http://emacs.stackexchange.com/users/3944")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/31203/how-to-start-python-shell-in-appropriate-working-directory"))) (published nil "2017-03-03T15:44:24Z") (updated nil "2017-03-03T15:44:24Z") (summary ((type . "html")) "
+
+            <p>If I am editing a python file, and start a python shell using <code>elpy-shell-switch-to-shell</code> the process appears to set the working directory as the containing directory of the file.</p>
+
+<p>However, the file itself is in a subfolder of a git repo. So, I would expect the working directory to be that of the containing .git directory.</p>
+
+<p>I set the project root directory using <code>elpy-set-project-root</code> but that didn't seem to change the behaviour of <code>elpy-shell-switch-to-shell</code>.</p>
+
+<p>What am I doing wrong here?</p>
+
+        "))) ("Can I edit two files (not buffers) at the same time?" "<p>Emacs has the <code>scroll-all-mode</code>, which scrolls two buffers synchronously.</p>
+<p>I need a way to edit <em>two host files</em> (note, not two buffers showing the same file) on different systems synchronously.  Something like <code>vi</code> running in <code>cssh</code>.  Is it possible with Emacs?</p>
+<p>I know that I can copy the files with <code>scp</code>, but the files are not identical. Just some parts are equal.</p>" "http://emacs.stackexchange.com/questions/31202/can-i-edit-two-files-not-buffers-at-the-same-time" (22713 31530) old 5 nil nil ((guid nil "http://emacs.stackexchange.com/q/31202") (id nil "http://emacs.stackexchange.com/q/31202") (rank ((scheme . "http://emacs.stackexchange.com")) "1") (title ((type . "text")) "Can I edit two files (not buffers) at the same time?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "text-editing"))) (author nil (name nil "ceving") (uri nil "http://emacs.stackexchange.com/users/2787")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/31202/can-i-edit-two-files-not-buffers-at-the-same-time"))) (published nil "2017-03-03T14:11:54Z") (updated nil "2017-03-03T14:18:18Z") (summary ((type . "html")) "
+
+            <p>Emacs has the <code>scroll-all-mode</code>, which scrolls two buffers synchronously.</p>
+
+<p>I need a way to edit <em>two host files</em> (note, not two buffers showing the same file) on different systems synchronously.  Something like <code>vi</code> running in <code>cssh</code>.  Is it possible with Emacs?</p>
+
+<p>I know that I can copy the files with <code>scp</code>, but the files are not identical. Just some parts are equal.</p>
+
+        "))) ("How to do a search that matches all todo's except a specific one?" "<p>I want to find all todo's except type TASK without having to list all the other types.</p>
+<p>I tried the following but no luck:</p>
+<p>```</p>
+<pre><code>(setq org-agenda-custom-commands '( (\"h\" \"Everything not a task\"
+( (todo \"-TASK\")))))
+</code></pre>
+<p>```</p>
+<p>Gives an empty list.</p>
+<p>```
+(setq org-agenda-custom-commands '( (\"h\" \"Everything not a task\"
+( (todo \".*|-TASK\")))))</p>
+<p>``</p>
+<p>Gives me everything, also TASK</p>
+<p>```
+(setq org-agenda-custom-commands '( (\"h\" \"Everything not a task\"
+( (todo \"TODO|-TASK\")))))</p>
+<p>``</p>
+<p>Gives me all TODO, and not TASK but I don't want to also maintain the list of types here.</p>" "http://emacs.stackexchange.com/questions/31201/how-to-do-a-search-that-matches-all-todos-except-a-specific-one" (22713 17249) old 6 nil nil ((guid nil "http://emacs.stackexchange.com/q/31201") (id nil "http://emacs.stackexchange.com/q/31201") (rank ((scheme . "http://emacs.stackexchange.com")) "2") (title ((type . "text")) "How to do a search that matches all todo's except a specific one?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-mode"))) (author nil (name nil "Max Rydahl Andersen") (uri nil "http://emacs.stackexchange.com/users/15105")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/31201/how-to-do-a-search-that-matches-all-todos-except-a-specific-one"))) (published nil "2017-03-03T10:20:17Z") (updated nil "2017-03-03T10:20:17Z") (summary ((type . "html")) "
+
+            <p>I want to find all todo's except type TASK without having to list all the other types.</p>
+
+<p>I tried the following but no luck:</p>
+
+<p>```</p>
+
+<pre><code>(setq org-agenda-custom-commands '( (\"h\" \"Everything not a task\"
+ ( (todo \"-TASK\")))))
+</code></pre>
+
+<p>```</p>
+
+<p>Gives an empty list.</p>
+
+<p>```
+    (setq org-agenda-custom-commands '( (\"h\" \"Everything not a task\"
+     ( (todo \".*|-TASK\")))))</p>
+
+<p>``</p>
+
+<p>Gives me everything, also TASK</p>
+
+<p>```
+    (setq org-agenda-custom-commands '( (\"h\" \"Everything not a task\"
+     ( (todo \"TODO|-TASK\")))))</p>
+
+<p>``</p>
+
+<p>Gives me all TODO, and not TASK but I don't want to also maintain the list of types here.</p>
+
+        "))) ("Emacs to Spacemacs Keybindings" "<p>So, I have been really struggling between vim and emacs. I like doing everything in the editor so I finally settled on emacs. Now I am trying to figure out the best way to learn key bindings and to set up my environment.</p>
+<p>As of late I have been using spacemacs. I really like it a lot, BUT there are times when it gets really slow. Too slow...</p>
+<p>What I like most is the ergonomic key bindings. </p>
+<p>Is there an easy quick way to give emacs similar key bindings with the help menu and all that? (Maybe as I learn I can disable it?) I want to create an emacs configuration from the ground up so it is lightweight and fast like when I use vim.</p>
+<p>Things I really want:</p>
+<p>I mainly will use it this for Java development. I will also use it for MVC frameworks like Ruby on Rails. Perhaps there is a good file explorer or other tools someone could recommend?</p>
+<p>TL;DR how to give base emacs spacemacs like keybindings. Recommended packages for Java Development, Ruby on Rails. Maybe there is a way to find out what is causing the spacemacs lag?</p>" "http://emacs.stackexchange.com/questions/31200/emacs-to-spacemacs-keybindings" (22713 7304) old 7 nil nil ((guid nil "http://emacs.stackexchange.com/q/31200") (id nil "http://emacs.stackexchange.com/q/31200") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "Emacs to Spacemacs Keybindings") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "spacemacs"))) (author nil (name nil "codingdraculasbrain") (uri nil "http://emacs.stackexchange.com/users/14956")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/31200/emacs-to-spacemacs-keybindings"))) (published nil "2017-03-03T07:34:32Z") (updated nil "2017-03-03T07:34:32Z") (summary ((type . "html")) "
+
+            <p>So, I have been really struggling between vim and emacs. I like doing everything in the editor so I finally settled on emacs. Now I am trying to figure out the best way to learn key bindings and to set up my environment.</p>
+
+<p>As of late I have been using spacemacs. I really like it a lot, BUT there are times when it gets really slow. Too slow...</p>
+
+<p>What I like most is the ergonomic key bindings. </p>
+
+<p>Is there an easy quick way to give emacs similar key bindings with the help menu and all that? (Maybe as I learn I can disable it?) I want to create an emacs configuration from the ground up so it is lightweight and fast like when I use vim.</p>
+
+<p>Things I really want:</p>
+
+<p>I mainly will use it this for Java development. I will also use it for MVC frameworks like Ruby on Rails. Perhaps there is a good file explorer or other tools someone could recommend?</p>
+
+<p>TL;DR how to give base emacs spacemacs like keybindings. Recommended packages for Java Development, Ruby on Rails. Maybe there is a way to find out what is causing the spacemacs lag?</p>
+
+        "))) ("How to disable the org-mode in a buffer" "<p>For a test purpose, I enabled the org-mode by <code>M-x org-mode</code> in a buffer (e.g., in scratch buffer). How to disable it? Doing again an <code>M-x org-mode</code> does not turn it off. </p>" "http://emacs.stackexchange.com/questions/31198/how-to-disable-the-org-mode-in-a-buffer" (22713 6010) old 8 nil nil ((guid nil "http://emacs.stackexchange.com/q/31198") (id nil "http://emacs.stackexchange.com/q/31198") (rank ((scheme . "http://emacs.stackexchange.com")) "1") (title ((type . "text")) "How to disable the org-mode in a buffer") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-mode"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "major-mode"))) (author nil (name nil "Name") (uri nil "http://emacs.stackexchange.com/users/2609")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/31198/how-to-disable-the-org-mode-in-a-buffer"))) (published nil "2017-03-03T06:03:50Z") (updated nil "2017-03-03T07:12:58Z") (summary ((type . "html")) "
+
+            <p>For a test purpose, I enabled the org-mode by <code>M-x org-mode</code> in a buffer (e.g., in scratch buffer). How to disable it? Doing again an <code>M-x org-mode</code> does not turn it off. </p>
+
+        "))) ("Conflict between org and yas: \\Cc &" "<p>In org mode, <code>\\Cc &amp;</code> goes back to the reference to a link; but this binding is suppressed by yasnippet.  Do I have to redefine it, or can I prevent yasnippet from creating these bindings in the first place?</p>" "http://emacs.stackexchange.com/questions/31195/conflict-between-org-and-yas-cc" (22712 40063) old 9 nil nil ((guid nil "http://emacs.stackexchange.com/q/31195") (id nil "http://emacs.stackexchange.com/q/31195") (rank ((scheme . "http://emacs.stackexchange.com")) "1") (title ((type . "text")) "Conflict between org and yas: \\Cc &") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-mode"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "yasnippet"))) (author nil (name nil "Toothrot") (uri nil "http://emacs.stackexchange.com/users/12497")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/31195/conflict-between-org-and-yas-cc"))) (published nil "2017-03-02T22:28:15Z") (updated nil "2017-03-02T22:28:15Z") (summary ((type . "html")) "
+
+            <p>In org mode, <code>\\Cc &amp;</code> goes back to the reference to a link; but this binding is suppressed by yasnippet.  Do I have to redefine it, or can I prevent yasnippet from creating these bindings in the first place?</p>
+
+        "))) ("Upgrading a built-in package" "<p>My system has emacs 24.5.1 with a built-in ruby-mode. I want to update to the latest ruby-mode from emacs 25.1 in order to get <a href=\"https://lists.gnu.org/archive/html/emacs-diffs/2016-01/msg00342.html\" rel=\"nofollow noreferrer\">improved syntax highlighting</a>. Upgrading the entire emacs installation is more than I want to chew off (many servers times many users).</p>
+<p>I copied the improved ruby-mode.el to my home dir and added to my .emacs file:</p>
+<pre><code>(load \"~/ruby-mode\")
+</code></pre>
+<p>I get no error messages upon reloading emacs, but also no upgraded ruby-mode (squiggly heredocs still not properly highlighted).</p>
+<p>How can I replace the built-in ruby-mode with my own local copy?</p>" "http://emacs.stackexchange.com/questions/31193/upgrading-a-built-in-package" (22712 43221) old 10 nil nil ((guid nil "http://emacs.stackexchange.com/q/31193") (id nil "http://emacs.stackexchange.com/q/31193") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "Upgrading a built-in package") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "ruby-mode"))) (author nil (name nil "ScottJ") (uri nil "http://emacs.stackexchange.com/users/15099")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/31193/upgrading-a-built-in-package"))) (published nil "2017-03-02T21:27:02Z") (updated nil "2017-03-02T23:20:53Z") (summary ((type . "html")) "
+
+            <p>My system has emacs 24.5.1 with a built-in ruby-mode. I want to update to the latest ruby-mode from emacs 25.1 in order to get <a href=\"https://lists.gnu.org/archive/html/emacs-diffs/2016-01/msg00342.html\" rel=\"nofollow noreferrer\">improved syntax highlighting</a>. Upgrading the entire emacs installation is more than I want to chew off (many servers times many users).</p>
+
+<p>I copied the improved ruby-mode.el to my home dir and added to my .emacs file:</p>
+
+<pre><code>(load \"~/ruby-mode\")
+</code></pre>
+
+<p>I get no error messages upon reloading emacs, but also no upgraded ruby-mode (squiggly heredocs still not properly highlighted).</p>
+
+<p>How can I replace the built-in ruby-mode with my own local copy?</p>
+
+        "))) ("noweb reference aware org-edit-special" "<p>Is there a way of splitting a src block into several blocks while keeping them together with noweb reference syntax and editing them using org-edit-special in such a way that would take into account all the noweb referenced blocks?</p>" "http://emacs.stackexchange.com/questions/31191/noweb-reference-aware-org-edit-special" (22712 34363) old 11 nil nil ((guid nil "http://emacs.stackexchange.com/q/31191") (id nil "http://emacs.stackexchange.com/q/31191") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "noweb reference aware org-edit-special") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-mode"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-babel"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "noweb"))) (author nil (name nil "Yuval Langer") (uri nil "http://emacs.stackexchange.com/users/14725")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/31191/noweb-reference-aware-org-edit-special"))) (published nil "2017-03-02T20:53:15Z") (updated nil "2017-03-02T20:53:15Z") (summary ((type . "html")) "
+
+            <p>Is there a way of splitting a src block into several blocks while keeping them together with noweb reference syntax and editing them using org-edit-special in such a way that would take into account all the noweb referenced blocks?</p>
+
+        "))) ("Wrong Type Argument: Stringp when Saving" "<p>I recently fiddled with the .emacs file to change the frequency and location of autosaved files. However, after I changed the file, every time I save (C-x C-s), I get the following error:</p>
+<p><code>Saving file /Users/r/.emacs...
+make-backup-file-name-1: Wrong type argument: stringp, (\"~/.saves\")</code></p>
+<p>Here is the part of the .emacs file I believe is causing the issue:</p>
+<pre><code>(setq debug-on-error t)
+(setq backup-directory-alist '((\".\" . \"~/.emacs.d/backup\"))
+backup-by-copying t    ; Don't delink hardlinks
+version-control t      ; Use version numbers on backups
+delete-old-versions t  ; Automatically delete excess backups
+kept-new-versions 20   ; how many of the newest versions to keep
+kept-old-versions 5    ; and how many of the old
+)
+</code></pre>
+<p>So my question is: What's causing the issue? I changed the first second line from <code>(setq backup-directory-alist '((\".\" . \"~/.saves\"))</code> to what it is now, but it doesn't seem like the changes are taking effect.</p>" "http://emacs.stackexchange.com/questions/31190/wrong-type-argument-stringp-when-saving" (22712 34244) old 12 nil nil ((guid nil "http://emacs.stackexchange.com/q/31190") (id nil "http://emacs.stackexchange.com/q/31190") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "Wrong Type Argument: Stringp when Saving") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "init-file"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "files"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "auto-save"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "backup"))) (author nil (name nil "Ricardo Iglesias") (uri nil "http://emacs.stackexchange.com/users/15097")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/31190/wrong-type-argument-stringp-when-saving"))) (published nil "2017-03-02T19:11:51Z") (updated nil "2017-03-02T20:51:16Z") (summary ((type . "html")) "
+
+            <p>I recently fiddled with the .emacs file to change the frequency and location of autosaved files. However, after I changed the file, every time I save (C-x C-s), I get the following error:</p>
+
+<p><code>Saving file /Users/r/.emacs...
+make-backup-file-name-1: Wrong type argument: stringp, (\"~/.saves\")</code></p>
+
+<p>Here is the part of the .emacs file I believe is causing the issue:</p>
+
+<pre><code>(setq debug-on-error t)
+
+(setq backup-directory-alist '((\".\" . \"~/.emacs.d/backup\"))
+  backup-by-copying t    ; Don't delink hardlinks
+  version-control t      ; Use version numbers on backups
+  delete-old-versions t  ; Automatically delete excess backups
+  kept-new-versions 20   ; how many of the newest versions to keep
+  kept-old-versions 5    ; and how many of the old
+  )
+</code></pre>
+
+<p>So my question is: What's causing the issue? I changed the first second line from <code>(setq backup-directory-alist '((\".\" . \"~/.saves\"))</code> to what it is now, but it doesn't seem like the changes are taking effect.</p>
+
+        "))) ("Repeat actions in slow motion, for presentation purposes" "<p>I would like to repeat actions (preferably as a keyboard macro, but I am open to other solutions), in some kind of automated, \"slow motion\".  By \"slow motion\", I mean at a speed that is close to human pace, rather than usual full speed of <code>C-x e</code>.</p>
+<p>The goal is to be able to prepare actions then play them again during a presentation, or in order to capture them in a screencast (a bit like the GIF at the top of <a href=\"http://developer.atlassian.com/blog/2015/11/scripting-with-node/\" rel=\"nofollow noreferrer\">http://developer.atlassian.com/blog/2015/11/scripting-with-node/</a>, or the videos in <a href=\"http://emacsgifs.github.io/\" rel=\"nofollow noreferrer\">http://emacsgifs.github.io/</a>).</p>
+<p>There are of course a lot of information about automating tasks, and creating macros in Emacs, but nothing about slowing their repetition.</p>" "http://emacs.stackexchange.com/questions/31184/repeat-actions-in-slow-motion-for-presentation-purposes" (22712 24978) old 13 nil nil ((guid nil "http://emacs.stackexchange.com/q/31184") (id nil "http://emacs.stackexchange.com/q/31184") (rank ((scheme . "http://emacs.stackexchange.com")) "2") (title ((type . "text")) "Repeat actions in slow motion, for presentation purposes") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "keyboard-macros"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "automation"))) (author nil (name nil "Florent Georges") (uri nil "http://emacs.stackexchange.com/users/11334")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/31184/repeat-actions-in-slow-motion-for-presentation-purposes"))) (published nil "2017-03-02T16:29:43Z") (updated nil "2017-03-02T18:16:50Z") (summary ((type . "html")) "
+
+            <p>I would like to repeat actions (preferably as a keyboard macro, but I am open to other solutions), in some kind of automated, \"slow motion\".  By \"slow motion\", I mean at a speed that is close to human pace, rather than usual full speed of <code>C-x e</code>.</p>
+
+<p>The goal is to be able to prepare actions then play them again during a presentation, or in order to capture them in a screencast (a bit like the GIF at the top of <a href=\"http://developer.atlassian.com/blog/2015/11/scripting-with-node/\" rel=\"nofollow noreferrer\">http://developer.atlassian.com/blog/2015/11/scripting-with-node/</a>, or the videos in <a href=\"http://emacsgifs.github.io/\" rel=\"nofollow noreferrer\">http://emacsgifs.github.io/</a>).</p>
+
+<p>There are of course a lot of information about automating tasks, and creating macros in Emacs, but nothing about slowing their repetition.</p>
+
+        "))) ("python-mode: set C-j to newline-and-indent" "<p>In python-mode, <code>C-j</code> adds a newline but does not indent, whereas <code>RET</code> does indent.  I would like to swap this behaviour around as well as disable electric indentation.</p>
+<p>I have tried the following:</p>
+<pre><code>(defun init-python-mode ()
+(when (fboundp 'electric-indent-mode)
+(electric-indent-mode -1))
+;; The following doesn't work to ensure C-j does the right thing.
+(define-key python-mode-map (kbd \"C-j\") 'newline-and-indent)
+(define-key python-mode-map (kbd \"RET\") 'newline-indent)
+(local-set-key (kbd \"C-j\") 'newline-and-indent)
+(local-set-key (kbd \"RET\") 'newline)
+;; ... so we're having to resort to using a hack.
+(run-at-time \"1 sec\" nil
+(lambda()
+(local-set-key (kbd \"C-j\") 'newline-and-indent)
+(local-set-key (kbd \"RET\") 'newline)))
+)
+</code></pre>
+<p>As you can see above, I could only set the key bindings after running a timer for a second.  It's as if additional code runs after my python initialisation function that overrides any attempts to locally bind the <code>C-j</code> and <code>RET</code> keys.</p>
+<p>Does anyone have any idea how I could rework the above such that I can locally bind keys as intended without resorting to a timer?</p>
+<p>Using emacs 24.5.1.</p>" "http://emacs.stackexchange.com/questions/31174/python-mode-set-c-j-to-newline-and-indent" (22713 5721) old 14 nil nil ((guid nil "http://emacs.stackexchange.com/q/31174") (id nil "http://emacs.stackexchange.com/q/31174") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "python-mode: set C-j to newline-and-indent") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "init-file"))) (author nil (name nil "user241936") (uri nil "http://emacs.stackexchange.com/users/15089")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/31174/python-mode-set-c-j-to-newline-and-indent"))) (published nil "2017-03-02T12:05:43Z") (updated nil "2017-03-03T07:08:09Z") (summary ((type . "html")) "
+
+            <p>In python-mode, <code>C-j</code> adds a newline but does not indent, whereas <code>RET</code> does indent.  I would like to swap this behaviour around as well as disable electric indentation.</p>
+
+<p>I have tried the following:</p>
+
+<pre><code>(defun init-python-mode ()
+  (when (fboundp 'electric-indent-mode)
+    (electric-indent-mode -1))
+
+    ;; The following doesn't work to ensure C-j does the right thing.
+    (define-key python-mode-map (kbd \"C-j\") 'newline-and-indent)
+    (define-key python-mode-map (kbd \"RET\") 'newline-indent)
+    (local-set-key (kbd \"C-j\") 'newline-and-indent)
+    (local-set-key (kbd \"RET\") 'newline)
+
+    ;; ... so we're having to resort to using a hack.
+    (run-at-time \"1 sec\" nil
+                 (lambda()
+                   (local-set-key (kbd \"C-j\") 'newline-and-indent)
+                   (local-set-key (kbd \"RET\") 'newline)))
+    )
+</code></pre>
+
+<p>As you can see above, I could only set the key bindings after running a timer for a second.  It's as if additional code runs after my python initialisation function that overrides any attempts to locally bind the <code>C-j</code> and <code>RET</code> keys.</p>
+
+<p>Does anyone have any idea how I could rework the above such that I can locally bind keys as intended without resorting to a timer?</p>
+
+<p>Using emacs 24.5.1.</p>
+
+        "))) ("Emacs 25.1 & Python 3.6.0 Integration [Newbie]" "<p><strong>Preface</strong>:</p>
+<p>I've been dabbling with python programming for a mere few months now. Previously, I spent most of my programming time using C# with Visual Studio. In the Python world, I've been using PyCharm for my projects. It has excellent code-completion (much like the IntelliSense I'm used to) and a nice level of customizability. However, at the end of the day, I want something a little bit lighter and less clunky. I have seen videos of developers using Emacs with Python and I'm quite interested in learning it.</p>
+<p><strong>Setup</strong>:</p>
+<ul>
+<li>Python 3.6.0 is installed.</li>
+<li>I have downloaded <a href=\"http://ftp.gnu.org/gnu/emacs/windows/\" rel=\"nofollow noreferrer\">emacs-25.1-x86_64-w64-mingw32.zip</a> from the Emacs website.</li>
+<li>I have created a folder <code>C:\\emacs</code> and extracted the zip file to this location</li>
+<li>I have identified the Emacs home folder as <code>C:\\Users\\joshu\\AppData\\Roaming\\.emacs.d</code></li>
+<li>I have created an <code>init.el</code> file in this directory since one did not exist</li>
+</ul>
+<p><strong>Python Integration</strong>:</p>
+<p>Now, this is where I'm struggling. I'm still extremely new to the software so it's a bit hard to piece together information from the internet. Using <a href=\"https://realpython.com/blog/python/emacs-the-best-python-editor/\" rel=\"nofollow noreferrer\">this tutorial</a> I have developed a baseline <code>init.el</code> file. Due to my reputation points, I cannot include a third link here. The Gist containing my <code>init.el</code> file is commented below.</p>
+<p>When I open Emacs and open a python file, editing works. However, I'm running into the issues outlined below:</p>
+<ol>
+<li><code>C-c C-c</code> returns an error. It seems to be a relatively wide-spread error upon Googling. By simply typing <code>C-c C-c</code> again, the shell will appear with the code being executed; however, it gives me the line <code>python.el: native completion setup failed</code></li>
+</ol>
+<p><strong>Edit</strong>: The error is <code>Warning (python): Your ‘python-shell-interpreter’ doesn’t seem to support
+readline, yet ‘python-shell-completion-native’ was t and \"python3\" is not
+part of the ‘python-shell-completion-native-disabled-interpreters’ list.
+Native completions have been disabled locally.</code></p>
+<ol start=\"2\">
+<li>Python autocomplete doesn't seem to be working properly. When using PyCharm, I get a much, much more robust offering of completions. In the case of Emacs, if I begin typing something such as <code>from tkint</code> it will not suggest <code>tkinter</code>. Similarly, if I start typing <code>from math import a</code> it will not suggest <code>abs</code>. I'm not sure at all how to configure Python autocompletion. I've read a few things about using <code>pip install jedi</code> and so on, but I haven't done any of that.</li>
+</ol>
+<p>I realize this may be just as much a python question as an Emacs question in some regards. Any insight is appreciated.</p>" "http://emacs.stackexchange.com/questions/31165/emacs-25-1-python-3-6-0-integration-newbie" (22712 36356) old 15 nil nil ((guid nil "http://emacs.stackexchange.com/q/31165") (id nil "http://emacs.stackexchange.com/q/31165") (rank ((scheme . "http://emacs.stackexchange.com")) "1") (title ((type . "text")) "Emacs 25.1 & Python 3.6.0 Integration [Newbie]") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "init-file"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "python"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "elpy"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "jedi"))) (author nil (name nil "Joshua Granger") (uri nil "http://emacs.stackexchange.com/users/15085")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/31165/emacs-25-1-python-3-6-0-integration-newbie"))) (published nil "2017-03-01T20:03:51Z") (updated nil "2017-03-02T21:26:28Z") (summary ((type . "html")) "
+
+            <p><strong>Preface</strong>:</p>
+
+<p>I've been dabbling with python programming for a mere few months now. Previously, I spent most of my programming time using C# with Visual Studio. In the Python world, I've been using PyCharm for my projects. It has excellent code-completion (much like the IntelliSense I'm used to) and a nice level of customizability. However, at the end of the day, I want something a little bit lighter and less clunky. I have seen videos of developers using Emacs with Python and I'm quite interested in learning it.</p>
+
+<p><strong>Setup</strong>:</p>
+
+<ul>
+<li>Python 3.6.0 is installed.</li>
+<li>I have downloaded <a href=\"http://ftp.gnu.org/gnu/emacs/windows/\" rel=\"nofollow noreferrer\">emacs-25.1-x86_64-w64-mingw32.zip</a> from the Emacs website.</li>
+<li>I have created a folder <code>C:\\emacs</code> and extracted the zip file to this location</li>
+<li>I have identified the Emacs home folder as <code>C:\\Users\\joshu\\AppData\\Roaming\\.emacs.d</code></li>
+<li>I have created an <code>init.el</code> file in this directory since one did not exist</li>
+</ul>
+
+<p><strong>Python Integration</strong>:</p>
+
+<p>Now, this is where I'm struggling. I'm still extremely new to the software so it's a bit hard to piece together information from the internet. Using <a href=\"https://realpython.com/blog/python/emacs-the-best-python-editor/\" rel=\"nofollow noreferrer\">this tutorial</a> I have developed a baseline <code>init.el</code> file. Due to my reputation points, I cannot include a third link here. The Gist containing my <code>init.el</code> file is commented below.</p>
+
+<p>When I open Emacs and open a python file, editing works. However, I'm running into the issues outlined below:</p>
+
+<ol>
+<li><code>C-c C-c</code> returns an error. It seems to be a relatively wide-spread error upon Googling. By simply typing <code>C-c C-c</code> again, the shell will appear with the code being executed; however, it gives me the line <code>python.el: native completion setup failed</code></li>
+</ol>
+
+<p><strong>Edit</strong>: The error is <code>Warning (python): Your ‘python-shell-interpreter’ doesn’t seem to support
+    readline, yet ‘python-shell-completion-native’ was t and \"python3\" is not
+    part of the ‘python-shell-completion-native-disabled-interpreters’ list.
+    Native completions have been disabled locally.</code></p>
+
+<ol start=\"2\">
+<li>Python autocomplete doesn't seem to be working properly. When using PyCharm, I get a much, much more robust offering of completions. In the case of Emacs, if I begin typing something such as <code>from tkint</code> it will not suggest <code>tkinter</code>. Similarly, if I start typing <code>from math import a</code> it will not suggest <code>abs</code>. I'm not sure at all how to configure Python autocompletion. I've read a few things about using <code>pip install jedi</code> and so on, but I haven't done any of that.</li>
+</ol>
+
+<p>I realize this may be just as much a python question as an Emacs question in some regards. Any insight is appreciated.</p>
+
+        "))) ("Elisp code output style in org mode" "<p>I want to print elisp code result as original but currently it will output with \"|\" separated.
+for example:</p>
+<pre><code>#+BEGIN_SRC emacs-lisp
+(setq my-list '(apple orange peach))
+#+END_SRC
+</code></pre>
+<p>The code block will output as below:</p>
+<pre><code>#+RESULTS:
+| apple | orange | peach |
+</code></pre>
+<p>How can I get output as original style like below:</p>
+<pre><code> #+RESULTS:
+(apple orange peach)
+</code></pre>" "http://emacs.stackexchange.com/questions/31073/elisp-code-output-style-in-org-mode" (22712 14933) old 16 nil nil ((guid nil "http://emacs.stackexchange.com/q/31073") (id nil "http://emacs.stackexchange.com/q/31073") (rank ((scheme . "http://emacs.stackexchange.com")) "1") (title ((type . "text")) "Elisp code output style in org mode") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-mode"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-babel"))) (author nil (name nil "beetlej") (uri nil "http://emacs.stackexchange.com/users/14840")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/31073/elisp-code-output-style-in-org-mode"))) (published nil "2017-02-27T03:11:04Z") (updated nil "2017-03-02T15:29:25Z") (summary ((type . "html")) "
+
+            <p>I want to print elisp code result as original but currently it will output with \"|\" separated.
+for example:</p>
+
+<pre><code>#+BEGIN_SRC emacs-lisp
+(setq my-list '(apple orange peach))
+#+END_SRC
+</code></pre>
+
+<p>The code block will output as below:</p>
+
+<pre><code>#+RESULTS:
+| apple | orange | peach |
+</code></pre>
+
+<p>How can I get output as original style like below:</p>
+
+<pre><code> #+RESULTS:
+ (apple orange peach)
+</code></pre>
+
+        "))) ("Clojure code evaluation in org-mode produces no output" "<p>I am trying to run clojure code from my org file in order to do some literate programming. </p>
+<p><strong>What is not working:</strong></p>
+<p>When I execute the source code block I get <code>No output produced</code>.</p>
+<p><em>Sample src code block</em></p>
+<pre><code>#+begin_src clojure
+(+ 2 2)
+#+end_src clojure
+</code></pre>
+<p><strong>What is working:</strong></p>
+<ol>
+<li><code>cider-jack-in</code> is working and I am able to execute code in the nREPL</li>
+<li>I am able to execute code from a <code>.clj</code> file</li>
+</ol>
+<p>Thanks</p>
+<p><strong>Details</strong></p>
+<p>Emacs 25.1 using Spacemacs</p>
+<p>Org-Mode 9.0.5</p>
+<p>Org babel configuration</p>
+<pre><code>(defun dotspacemacs/user-config ()
+(require 'ob)
+(require 'ob-clojure)
+(require 'paredit)
+(require 'org-babel-clojure)
+(setq org-babel-clojure-backend 'cider)
+(require 'cider)
+(org-babel-do-load-languages
+'org-babel-load-languages
+'((clojure . t)))
+)
+</code></pre>
+<p>Please let me know if you need any other information</p>" "http://emacs.stackexchange.com/questions/30857/clojure-code-evaluation-in-org-mode-produces-no-output" (22712 61117) old 17 nil nil ((guid nil "http://emacs.stackexchange.com/q/30857") (id nil "http://emacs.stackexchange.com/q/30857") (rank ((scheme . "http://emacs.stackexchange.com")) "4") (title ((type . "text")) "Clojure code evaluation in org-mode produces no output") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-mode"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-babel"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "clojure"))) (author nil (name nil "Jeel Shah") (uri nil "http://emacs.stackexchange.com/users/10027")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/30857/clojure-code-evaluation-in-org-mode-produces-no-output"))) (published nil "2017-02-19T15:39:37Z") (updated nil "2017-03-03T04:19:09Z") (summary ((type . "html")) "
+
+            <p>I am trying to run clojure code from my org file in order to do some literate programming. </p>
+
+<p><strong>What is not working:</strong></p>
+
+<p>When I execute the source code block I get <code>No output produced</code>.</p>
+
+<p><em>Sample src code block</em></p>
+
+<pre><code>#+begin_src clojure
+(+ 2 2)
+#+end_src clojure
+</code></pre>
+
+<p><strong>What is working:</strong></p>
+
+<ol>
+<li><code>cider-jack-in</code> is working and I am able to execute code in the nREPL</li>
+<li>I am able to execute code from a <code>.clj</code> file</li>
+</ol>
+
+<p>Thanks</p>
+
+<p><strong>Details</strong></p>
+
+<p>Emacs 25.1 using Spacemacs</p>
+
+<p>Org-Mode 9.0.5</p>
+
+<p>Org babel configuration</p>
+
+<pre><code>(defun dotspacemacs/user-config ()
+  (require 'ob)
+  (require 'ob-clojure)
+  (require 'paredit)
+  (require 'org-babel-clojure)
+  (setq org-babel-clojure-backend 'cider)
+  (require 'cider)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((clojure . t)))
+  )
+</code></pre>
+
+<p>Please let me know if you need any other information</p>
+
+        "))) ("How to indent relative to start of the previous line rather than relative to the beginning of the expression?" "<p>In <a href=\"/questions/tagged/php-mode\" class=\"post-tag\" title=\"show questions tagged 'php-mode'\" rel=\"tag\">php-mode</a> – and in many others I believe – indentation of an expression spreading over several lines is computed relative to the starting column of the expression rather than the column of the first non-blank character of the line where the expression starts.</p>
+<p>This is displayed by the following snippet, where the <code>return</code> keyword is indented four columns counting from the <code>a</code> starting the <code>array_map(…)</code> expression:</p>
+<pre><code>&lt;?php
+function weights($volumes, $density)
+{
+$weights = array_map(function ($volume) {
+return $volume * $density;
+}, $volumes);
+return $weights;
+}
+</code></pre>
+<p>I must follow another indentation style, where the <code>return</code> keyword is indented four columns counting from the <code>$</code> of <code>$weights</code> which is the first non-blank character of the line where the <code>array_map</code> expression starts.</p>
+<pre><code>&lt;?php
+function weights($volumes, $density)
+{
+$weights = array_map(function ($volume) {
+return $volume * $density;
+}, $volumes);
+return $weights;
+}
+</code></pre>
+<p>How can I configure Emacs and the <a href=\"/questions/tagged/c-mode\" class=\"post-tag\" title=\"show questions tagged 'c-mode'\" rel=\"tag\">c-mode</a> to use this second style? I could not find any reference to this behaviour on the <a href=\"https://www.emacswiki.org/emacs/AutoIndentation\" rel=\"nofollow noreferrer\">emacs-wiki</a>.</p>
+<p>The indentation settings in use are the following:</p>
+<pre><code>(c-add-style \"my-php-style\"
+'(\"gnu\"
+(c-basic-offset . 4)
+(c-offsets-alist
+(arglist-cont . 0)
+(arglist-intro . +)
+(block-close . 0)
+(defun-block-intro . +)
+(defun-close . 0)
+(defun-open . 0)
+(statement . 0)
+(statement-block-intro . +)
+(topmost-intro . 0)
+(access-label . -)
+(annotation-top-cont . 0)
+(annotation-var-cont . +)
+(arglist-close . c-lineup-arglist-operators)
+(arglist-cont-nonempty . c-lineup-math)
+(block-open . 0)
+(brace-entry-open . 0)
+(brace-list-close . 0)
+(brace-list-entry . 0)
+(brace-list-intro . +)
+(brace-list-open . +)
+(c . c-lineup-C-comments)
+(case-label . +)
+(catch-clause . 0)
+(class-close . 0)
+(class-open . 0)
+(comment-intro . c-lineup-comment)
+(composition-close . 0)
+(composition-open . 0)
+(cpp-define-intro c-lineup-cpp-define +)
+(cpp-macro . -1000)
+(cpp-macro-cont . +)
+(do-while-closure . 0)
+(else-clause . 0)
+(extern-lang-close . 0)
+(extern-lang-open . 0)
+(friend . 0)
+(func-decl-cont . +)
+(inclass . +)
+(incomposition . +)
+(inexpr-class . +)
+(inexpr-statement . +)
+(inextern-lang . +)
+(inher-cont . c-lineup-multi-inher)
+(inher-intro . +)
+(inlambda . c-lineup-inexpr-block)
+(inline-close . 0)
+(inline-open . 0)
+(inmodule . +)
+(innamespace . +)
+(knr-argdecl . 0)
+(knr-argdecl-intro . 5)
+(label . 0)
+(lambda-intro-cont . +)
+(member-init-cont . c-lineup-multi-inher)
+(member-init-intro . +)
+(module-close . 0)
+(module-open . 0)
+(namespace-close . 0)
+(namespace-open . 0)
+(objc-method-args-cont . c-lineup-ObjC-method-args)
+(objc-method-call-cont c-lineup-ObjC-method-call-colons c-lineup-ObjC-method-call +)
+(objc-method-intro .
+[0])
+(statement-case-intro . +)
+(statement-case-open . +)
+(statement-cont . +)
+(stream-op . c-lineup-streamop)
+(string . -1000)
+(substatement . +)
+(substatement-label . 0)
+(substatement-open . +)
+(template-args-cont c-lineup-template-args +)
+(topmost-intro-cont first c-lineup-topmost-intro-cont c-lineup-gnu-DEFUN-intro-cont))))
+</code></pre>" "http://emacs.stackexchange.com/questions/28714/how-to-indent-relative-to-start-of-the-previous-line-rather-than-relative-to-the" (22712 23260) old 18 nil nil ((guid nil "http://emacs.stackexchange.com/q/28714") (id nil "http://emacs.stackexchange.com/q/28714") (rank ((scheme . "http://emacs.stackexchange.com")) "1") (title ((type . "text")) "How to indent relative to start of the previous line rather than relative to the beginning of the expression?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "indentation"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "php-mode"))) (author nil (name nil "Michael Grünewald") (uri nil "http://emacs.stackexchange.com/users/310")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/28714/how-to-indent-relative-to-start-of-the-previous-line-rather-than-relative-to-the"))) (published nil "2016-11-17T10:29:59Z") (updated nil "2017-03-02T17:48:12Z") (summary ((type . "html")) "
+
+            <p>In <a href=\"/questions/tagged/php-mode\" class=\"post-tag\" title=\"show questions tagged &#39;php-mode&#39;\" rel=\"tag\">php-mode</a> – and in many others I believe – indentation of an expression spreading over several lines is computed relative to the starting column of the expression rather than the column of the first non-blank character of the line where the expression starts.</p>
+
+<p>This is displayed by the following snippet, where the <code>return</code> keyword is indented four columns counting from the <code>a</code> starting the <code>array_map(…)</code> expression:</p>
+
+<pre><code>&lt;?php
+
+function weights($volumes, $density)
+{
+    $weights = array_map(function ($volume) {
+                   return $volume * $density;
+               }, $volumes);
+    return $weights;
+}
+</code></pre>
+
+<p>I must follow another indentation style, where the <code>return</code> keyword is indented four columns counting from the <code>$</code> of <code>$weights</code> which is the first non-blank character of the line where the <code>array_map</code> expression starts.</p>
+
+<pre><code>&lt;?php
+
+function weights($volumes, $density)
+{
+    $weights = array_map(function ($volume) {
+        return $volume * $density;
+    }, $volumes);
+    return $weights;
+}
+</code></pre>
+
+<p>How can I configure Emacs and the <a href=\"/questions/tagged/c-mode\" class=\"post-tag\" title=\"show questions tagged &#39;c-mode&#39;\" rel=\"tag\">c-mode</a> to use this second style? I could not find any reference to this behaviour on the <a href=\"https://www.emacswiki.org/emacs/AutoIndentation\" rel=\"nofollow noreferrer\">emacs-wiki</a>.</p>
+
+<p>The indentation settings in use are the following:</p>
+
+<pre><code>(c-add-style \"my-php-style\"
+             '(\"gnu\"
+               (c-basic-offset . 4)
+               (c-offsets-alist
+                (arglist-cont . 0)
+                (arglist-intro . +)
+                (block-close . 0)
+                (defun-block-intro . +)
+                (defun-close . 0)
+                (defun-open . 0)
+                (statement . 0)
+                (statement-block-intro . +)
+                (topmost-intro . 0)
+                (access-label . -)
+                (annotation-top-cont . 0)
+                (annotation-var-cont . +)
+                (arglist-close . c-lineup-arglist-operators)
+                (arglist-cont-nonempty . c-lineup-math)
+                (block-open . 0)
+                (brace-entry-open . 0)
+                (brace-list-close . 0)
+                (brace-list-entry . 0)
+                (brace-list-intro . +)
+                (brace-list-open . +)
+                (c . c-lineup-C-comments)
+                (case-label . +)
+                (catch-clause . 0)
+                (class-close . 0)
+                (class-open . 0)
+                (comment-intro . c-lineup-comment)
+                (composition-close . 0)
+                (composition-open . 0)
+                (cpp-define-intro c-lineup-cpp-define +)
+                (cpp-macro . -1000)
+                (cpp-macro-cont . +)
+                (do-while-closure . 0)
+                (else-clause . 0)
+                (extern-lang-close . 0)
+                (extern-lang-open . 0)
+                (friend . 0)
+                (func-decl-cont . +)
+                (inclass . +)
+                (incomposition . +)
+                (inexpr-class . +)
+                (inexpr-statement . +)
+                (inextern-lang . +)
+                (inher-cont . c-lineup-multi-inher)
+                (inher-intro . +)
+                (inlambda . c-lineup-inexpr-block)
+                (inline-close . 0)
+                (inline-open . 0)
+                (inmodule . +)
+                (innamespace . +)
+                (knr-argdecl . 0)
+                (knr-argdecl-intro . 5)
+                (label . 0)
+                (lambda-intro-cont . +)
+                (member-init-cont . c-lineup-multi-inher)
+                (member-init-intro . +)
+                (module-close . 0)
+                (module-open . 0)
+                (namespace-close . 0)
+                (namespace-open . 0)
+                (objc-method-args-cont . c-lineup-ObjC-method-args)
+                (objc-method-call-cont c-lineup-ObjC-method-call-colons c-lineup-ObjC-method-call +)
+                (objc-method-intro .
+                                   [0])
+                (statement-case-intro . +)
+                (statement-case-open . +)
+                (statement-cont . +)
+                (stream-op . c-lineup-streamop)
+                (string . -1000)
+                (substatement . +)
+                (substatement-label . 0)
+                (substatement-open . +)
+                (template-args-cont c-lineup-template-args +)
+                (topmost-intro-cont first c-lineup-topmost-intro-cont c-lineup-gnu-DEFUN-intro-cont))))
+</code></pre>
+
+        "))) ("gnutls-negotiate: Certificate validation failed for [hostname] verification code 402" "<p>After upgrading to Emacs 25, I get <code>gnutls-negotiate: Certificate validation failed for [hostname] verification code 402</code> on connecting to my weechat IRC proxy, with no prompt about accepting things anyway. I already have </p>
+<p><code>(add-to-list 'gnutls-trustfiles \"~/.emacs.d/weechat-relay.cert\")</code></p>
+<p>where weechat-relay.cert is the CERTIFICATE part of the weechat IRC proxy ssl key.</p>" "http://emacs.stackexchange.com/questions/27554/gnutls-negotiate-certificate-validation-failed-for-hostname-verification-code" (22713 24650) old 20 nil nil ((guid nil "http://emacs.stackexchange.com/q/27554") (id nil "http://emacs.stackexchange.com/q/27554") (rank ((scheme . "http://emacs.stackexchange.com")) "1") (title ((type . "text")) "gnutls-negotiate: Certificate validation failed for [hostname] verification code 402") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "gnutls"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "ssl"))) (author nil (name nil "unhammer") (uri nil "http://emacs.stackexchange.com/users/730")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/27554/gnutls-negotiate-certificate-validation-failed-for-hostname-verification-code"))) (published nil "2016-10-04T10:53:55Z") (updated nil "2017-03-03T12:23:38Z") (summary ((type . "html")) "
+
+            <p>After upgrading to Emacs 25, I get <code>gnutls-negotiate: Certificate validation failed for [hostname] verification code 402</code> on connecting to my weechat IRC proxy, with no prompt about accepting things anyway. I already have </p>
+
+<p><code>(add-to-list 'gnutls-trustfiles \"~/.emacs.d/weechat-relay.cert\")</code></p>
+
+<p>where weechat-relay.cert is the CERTIFICATE part of the weechat IRC proxy ssl key.</p>
+
+        "))) ("Windows eshell alias command line arguments.. how?" "<p>I have <code>alias msexcel (w32-browser \"C:/program files/microsoft office/office12/excel.exe\")</code> and this means I can do <code>msexcel</code> from eshell and an asynchronous MS Excel will begin to run.</p>
+<p>I am looking for ways to do <code>msexcel \"C:\\\\documents\\ and\\ settings\\\\me\\my\\ documents\\\\book.xlsx\"</code>.</p>
+<p><code>alias msexcel (w32-browser (format \"C:/program files/microsoft office/office12/excel.exe /r %s\" $1))</code> returns the error message <code>(void-variable $1)</code>.</p>
+<p>How do I send Excel a file name through this eshell alias?</p>" "http://emacs.stackexchange.com/questions/22687/windows-eshell-alias-command-line-arguments-how" (22713 6249) old 21 nil nil ((guid nil "http://emacs.stackexchange.com/q/22687") (id nil "http://emacs.stackexchange.com/q/22687") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "Windows eshell alias command line arguments.. how?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "microsoft-windows"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "eshell"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "subprocess"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "async"))) (author nil (name nil "vpit3833") (uri nil "http://emacs.stackexchange.com/users/10924")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/22687/windows-eshell-alias-command-line-arguments-how"))) (published nil "2016-06-01T02:22:49Z") (updated nil "2017-03-03T07:16:57Z") (summary ((type . "html")) "
+
+            <p>I have <code>alias msexcel (w32-browser \"C:/program files/microsoft office/office12/excel.exe\")</code> and this means I can do <code>msexcel</code> from eshell and an asynchronous MS Excel will begin to run.</p>
+
+<p>I am looking for ways to do <code>msexcel \"C:\\\\documents\\ and\\ settings\\\\me\\my\\ documents\\\\book.xlsx\"</code>.</p>
+
+<p><code>alias msexcel (w32-browser (format \"C:/program files/microsoft office/office12/excel.exe /r %s\" $1))</code> returns the error message <code>(void-variable $1)</code>.</p>
+
+<p>How do I send Excel a file name through this eshell alias?</p>
+
+        "))) ("Tags own pane that is auto generated?" "<p>Is there a way to gather all the tags used in an <code>org-mode</code> file,
+and it displays these on a dedicated side pane?</p>" "http://emacs.stackexchange.com/questions/21741/tags-own-pane-that-is-auto-generated" (22712 53763) old 22 nil nil ((guid nil "http://emacs.stackexchange.com/q/21741") (id nil "http://emacs.stackexchange.com/q/21741") (rank ((scheme . "http://emacs.stackexchange.com")) "2") (title ((type . "text")) "Tags own pane that is auto generated?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-tags"))) (author nil (name nil "Orgmodes") (uri nil "http://emacs.stackexchange.com/users/11788")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/21741/tags-own-pane-that-is-auto-generated"))) (published nil "2016-04-20T18:55:17Z") (updated nil "2017-03-03T02:16:35Z") (summary ((type . "html")) "
+
+            <p>Is there a way to gather all the tags used in an <code>org-mode</code> file, 
+and it displays these on a dedicated side pane?</p>
+
+        "))) ("Get time in AM/PM format" "<p><code>(format-time-string \"%p\")</code> is empty in my Emacs. How I can format date in AM/PM format?</p>
+<p>That answer second part of <a href=\"http://emacs.stackexchange.com/questions/20799/show-time-in-different-time-zones\">Show time in different time zones</a></p>
+<p><strong>UPDATE</strong></p>
+<pre><code>(length (format-time-string \"%p\"))  ; is 0
+(getenv \"LC_TIME\")                  ; is \"en_DK.utf8\"
+</code></pre>
+<p>My default preferences (in <code>.emacs</code>):</p>
+<pre><code>(setq display-time-24hr-format t)
+(setq display-time-day-and-date nil)
+</code></pre>" "http://emacs.stackexchange.com/questions/20810/get-time-in-am-pm-format" (22712 46555) old 23 nil nil ((guid nil "http://emacs.stackexchange.com/q/20810") (id nil "http://emacs.stackexchange.com/q/20810") (rank ((scheme . "http://emacs.stackexchange.com")) "2") (title ((type . "text")) "Get time in AM/PM format") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "time-date"))) (author nil (name nil "gavenkoa") (uri nil "http://emacs.stackexchange.com/users/947")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/20810/get-time-in-am-pm-format"))) (published nil "2016-03-07T09:59:15Z") (updated nil "2017-03-03T00:16:27Z") (summary ((type . "html")) "
+
+            <p><code>(format-time-string \"%p\")</code> is empty in my Emacs. How I can format date in AM/PM format?</p>
+
+<p>That answer second part of <a href=\"http://emacs.stackexchange.com/questions/20799/show-time-in-different-time-zones\">Show time in different time zones</a></p>
+
+<p><strong>UPDATE</strong></p>
+
+<pre><code>(length (format-time-string \"%p\"))  ; is 0
+(getenv \"LC_TIME\")                  ; is \"en_DK.utf8\"
+</code></pre>
+
+<p>My default preferences (in <code>.emacs</code>):</p>
+
+<pre><code>(setq display-time-24hr-format t)
+(setq display-time-day-and-date nil)
+</code></pre>
+
+        "))) ("Keybinding to the wrong command?" "<p>When I press <code>M-&lt;up&gt;</code> in <code>org-mode</code> to move my headers I get this message in the minibuffer:</p>
+<pre><code>There is no other window
+</code></pre>
+<p>Why does my keybinding not work?</p>" "http://emacs.stackexchange.com/questions/18725/keybinding-to-the-wrong-command" (22712 21522) old 24 nil nil ((guid nil "http://emacs.stackexchange.com/q/18725") (id nil "http://emacs.stackexchange.com/q/18725") (rank ((scheme . "http://emacs.stackexchange.com")) "2") (title ((type . "text")) "Keybinding to the wrong command?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-mode"))) (author nil (name nil "falematte") (uri nil "http://emacs.stackexchange.com/users/7199")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/18725/keybinding-to-the-wrong-command"))) (published nil "2015-12-09T09:19:54Z") (updated nil "2017-03-02T17:19:14Z") (summary ((type . "html")) "
+
+            <p>When I press <code>M-&lt;up&gt;</code> in <code>org-mode</code> to move my headers I get this message in the minibuffer:</p>
+
+<pre><code>There is no other window
+</code></pre>
+
+<p>Why does my keybinding not work?</p>
+
+        "))) ("Highlighting missing references" "<p>Is it possible for auctex to display missing references differently to ones which are in the bib file? Currently, all references look identical so it's impossible to tell at a glance which citation keys are defined in the bib file, and which are not. Texstudio does this quite nicely.</p>
+<p><code>book.tex</code>:</p>
+<pre class=\"lang-latex prettyprint-override\"><code>\\documentclass{book}
+\\usepackage[backend=biber]{biblatex}
+\\addbibresource{bib.bib}
+\\begin{document}
+This reference exists \\autocite{ref1}.
+This reference does not \\autocite{ref2}.
+% A squiggle, red, anything different to show \"ref2\" differently to \"ref1\" would be lovely.
+\\end{document}
+</code></pre>
+<p><code>book.bib</code>:</p>
+<pre><code>@misc{ref1, ...}
+</code></pre>" "http://emacs.stackexchange.com/questions/18687/highlighting-missing-references" (22713 10141) old 25 nil nil ((guid nil "http://emacs.stackexchange.com/q/18687") (id nil "http://emacs.stackexchange.com/q/18687") (rank ((scheme . "http://emacs.stackexchange.com")) "10") (title ((type . "text")) "Highlighting missing references") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "auctex"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "highlighting"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "bibtex"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-ref"))) (author nil (name nil "cazgp") (uri nil "http://emacs.stackexchange.com/users/10429")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/18687/highlighting-missing-references"))) (published nil "2015-12-08T10:58:39Z") (updated nil "2017-03-03T08:21:49Z") (summary ((type . "html")) "
+
+            <p>Is it possible for auctex to display missing references differently to ones which are in the bib file? Currently, all references look identical so it's impossible to tell at a glance which citation keys are defined in the bib file, and which are not. Texstudio does this quite nicely.</p>
+
+<p><code>book.tex</code>:</p>
+
+<pre class=\"lang-latex prettyprint-override\"><code>\\documentclass{book}
+\\usepackage[backend=biber]{biblatex}
+\\addbibresource{bib.bib}
+
+\\begin{document}
+This reference exists \\autocite{ref1}.
+This reference does not \\autocite{ref2}.
+% A squiggle, red, anything different to show \"ref2\" differently to \"ref1\" would be lovely.
+\\end{document}
+</code></pre>
+
+<p><code>book.bib</code>:</p>
+
+<pre><code>@misc{ref1, ...}
+</code></pre>
+
+        "))) ("Mu4e not autofilling email addresses" "<p>I seem to have a problem with mu4e not correctly autofilling email addresses. According to <a href=\"http://www.djcbsoftware.nl/code/mu/mu4e/Address-autocompletion.html\" rel=\"nofollow\">this page</a>, this should happen automatically. And for many (most?) addresses it does. But then others it doesn't get for whatever reason.</p>
+<p>Any ideas where to start here? </p>" "http://emacs.stackexchange.com/questions/18373/mu4e-not-autofilling-email-addresses" (22712 64587) old 26 nil nil ((guid nil "http://emacs.stackexchange.com/q/18373") (id nil "http://emacs.stackexchange.com/q/18373") (rank ((scheme . "http://emacs.stackexchange.com")) "1") (title ((type . "text")) "Mu4e not autofilling email addresses") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "mu4e"))) (author nil (name nil "Alex") (uri nil "http://emacs.stackexchange.com/users/10274")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/18373/mu4e-not-autofilling-email-addresses"))) (published nil "2015-11-24T15:50:37Z") (updated nil "2017-03-03T05:16:59Z") (summary ((type . "html")) "
+
+            <p>I seem to have a problem with mu4e not correctly autofilling email addresses. According to <a href=\"http://www.djcbsoftware.nl/code/mu/mu4e/Address-autocompletion.html\" rel=\"nofollow\">this page</a>, this should happen automatically. And for many (most?) addresses it does. But then others it doesn't get for whatever reason.</p>
+
+<p>Any ideas where to start here? </p>
+
+        "))) ("How to limit exported column view to a filtered subset of your headings?" "<p>I have a big org-mode file using tags and <code>TODO</code> keywords and properties. I would like to display a summary of \"Effort\" estimates <strong>on
+subsets</strong> of the headings <strong>with sums as we go up in the section hierarchy</strong>.</p>
+<p>Columnview is perfect for the summing part, except it lacks any means to filter headings.</p>
+<p>And clock table could display <code>Effort</code> estimates (if listed in <code>:properties</code>) and filter heading appropriately but won't sum <code>Effort</code> estimate up along the heading hierarchy, and actually do not display any heading without CLOCK set.</p>
+<p>Any hints on how I could achieve this ?</p>
+<p><strong>EDIT:</strong> I managed to do this thanks to org-babel and some external python code, but that's awfully complex.</p>" "http://emacs.stackexchange.com/questions/16310/how-to-limit-exported-column-view-to-a-filtered-subset-of-your-headings" (22712 42955) old 27 nil nil ((guid nil "http://emacs.stackexchange.com/q/16310") (id nil "http://emacs.stackexchange.com/q/16310") (rank ((scheme . "http://emacs.stackexchange.com")) "2") (title ((type . "text")) "How to limit exported column view to a filtered subset of your headings?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-mode"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "org-clock"))) (author nil (name nil "vaab") (uri nil "http://emacs.stackexchange.com/users/9411")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/16310/how-to-limit-exported-column-view-to-a-filtered-subset-of-your-headings"))) (published nil "2015-09-04T06:06:50Z") (updated nil "2017-03-02T23:16:27Z") (summary ((type . "html")) "
+
+            <p>I have a big org-mode file using tags and <code>TODO</code> keywords and properties. I would like to display a summary of \"Effort\" estimates <strong>on
+subsets</strong> of the headings <strong>with sums as we go up in the section hierarchy</strong>.</p>
+
+<p>Columnview is perfect for the summing part, except it lacks any means to filter headings.</p>
+
+<p>And clock table could display <code>Effort</code> estimates (if listed in <code>:properties</code>) and filter heading appropriately but won't sum <code>Effort</code> estimate up along the heading hierarchy, and actually do not display any heading without CLOCK set.</p>
+
+<p>Any hints on how I could achieve this ?</p>
+
+<p><strong>EDIT:</strong> I managed to do this thanks to org-babel and some external python code, but that's awfully complex.</p>
+
+        "))) ("How to force a Python shell to re-import modules when running a buffer?" "<p>I'm using C-c C-c to send a buffer to a Python shell. The buffer has an import at the beginning. I found that if I modify the module I'm importing, it doesn't reflect the changes if I run the buffer again with C-c C-c (it seems the Inferior Python is doing the import only once).</p>
+<p>How can I force the Python shell to import again the modules already called in the first run of the buffer?</p>" "http://emacs.stackexchange.com/questions/13476/how-to-force-a-python-shell-to-re-import-modules-when-running-a-buffer" (22712 47588) old 28 nil nil ((guid nil "http://emacs.stackexchange.com/q/13476") (id nil "http://emacs.stackexchange.com/q/13476") (rank ((scheme . "http://emacs.stackexchange.com")) "2") (title ((type . "text")) "How to force a Python shell to re-import modules when running a buffer?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "python"))) (author nil (name nil "El Diego Efe") (uri nil "http://emacs.stackexchange.com/users/77")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/13476/how-to-force-a-python-shell-to-re-import-modules-when-running-a-buffer"))) (published nil "2015-06-26T17:34:47Z") (updated nil "2017-03-03T00:33:40Z") (summary ((type . "html")) "
+
+            <p>I'm using C-c C-c to send a buffer to a Python shell. The buffer has an import at the beginning. I found that if I modify the module I'm importing, it doesn't reflect the changes if I run the buffer again with C-c C-c (it seems the Inferior Python is doing the import only once).</p>
+
+<p>How can I force the Python shell to import again the modules already called in the first run of the buffer?</p>
+
+        "))) ("How can I print an Emacs frame?" "<p>The function <code>ps-print-buffer-with-faces</code> prints an Emacs buffer.  Is
+there a way to print a frame with more than one buffer in it?  I would
+like to print an Emacs calc frame both with the RPN stack and the
+trail buffer.</p>" "http://emacs.stackexchange.com/questions/12414/how-can-i-print-an-emacs-frame" (22713 20955) old 29 nil nil ((guid nil "http://emacs.stackexchange.com/q/12414") (id nil "http://emacs.stackexchange.com/q/12414") (rank ((scheme . "http://emacs.stackexchange.com")) "24") (title ((type . "text")) "How can I print an Emacs frame?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "frames"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "calc"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "print"))) (author nil (name nil "The Dude") (uri nil "http://emacs.stackexchange.com/users/6663")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/12414/how-can-i-print-an-emacs-frame"))) (published nil "2015-05-14T18:17:59Z") (updated nil "2017-03-03T11:22:03Z") (summary ((type . "html")) "
+
+            <p>The function <code>ps-print-buffer-with-faces</code> prints an Emacs buffer.  Is
+there a way to print a frame with more than one buffer in it?  I would
+like to print an Emacs calc frame both with the RPN stack and the
+trail buffer.</p>
+
+        "))) ("Simple JDEE Setup for Existing Java Project" "<p>I imagine most developers, like myself, starting out with <a href=\"http://jdee.sourceforge.net\" rel=\"nofollow\">JDEE</a> are beginning with source code that is already written as opposed to a new empty project. What I'm asking for is a simple explanation of how to get JDEE set up for an existing Java project.</p>
+<p>The <a href=\"http://jdee.sourceforge.net/jdedoc/html/jde-ug/jde-ug.html\" rel=\"nofollow\">user's guide</a> on the JDEE website explains this to some degree, but is organized more as a highly detailed tutorial and isn't always clear on which settings are required and which are optional. Also, the user's guide uses custom variables as opposed to settings that can easily be pasted into and modified in a .emacs file. I'm looking for something that can easily be copied and pasted into a .emacs file (and any other files, such as project files) and modified to suit the file paths a developer already has.</p>
+<p>The setup should allow the use of all of the features available in JDEE that one typically expects in an IDE such as Eclipse. Please assume that the developer reading your answer has JDEE installed in Emacs, but has not gone any further than that.</p>
+<p>I've been struggling to get this set up at home and look forward to the answers I receive so I can learn more about Java and Emacs.</p>" "http://emacs.stackexchange.com/questions/9464/simple-jdee-setup-for-existing-java-project" (22712 13801) old 30 nil nil ((guid nil "http://emacs.stackexchange.com/q/9464") (id nil "http://emacs.stackexchange.com/q/9464") (rank ((scheme . "http://emacs.stackexchange.com")) "4") (title ((type . "text")) "Simple JDEE Setup for Existing Java Project") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "java"))) (author nil (name nil "Drake Sobania") (uri nil "http://emacs.stackexchange.com/users/6571")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/9464/simple-jdee-setup-for-existing-java-project"))) (published nil "2015-02-21T17:34:10Z") (updated nil "2017-03-02T15:10:33Z") (summary ((type . "html")) "
+
+            <p>I imagine most developers, like myself, starting out with <a href=\"http://jdee.sourceforge.net\" rel=\"nofollow\">JDEE</a> are beginning with source code that is already written as opposed to a new empty project. What I'm asking for is a simple explanation of how to get JDEE set up for an existing Java project.</p>
+
+<p>The <a href=\"http://jdee.sourceforge.net/jdedoc/html/jde-ug/jde-ug.html\" rel=\"nofollow\">user's guide</a> on the JDEE website explains this to some degree, but is organized more as a highly detailed tutorial and isn't always clear on which settings are required and which are optional. Also, the user's guide uses custom variables as opposed to settings that can easily be pasted into and modified in a .emacs file. I'm looking for something that can easily be copied and pasted into a .emacs file (and any other files, such as project files) and modified to suit the file paths a developer already has.</p>
+
+<p>The setup should allow the use of all of the features available in JDEE that one typically expects in an IDE such as Eclipse. Please assume that the developer reading your answer has JDEE installed in Emacs, but has not gone any further than that.</p>
+
+<p>I've been struggling to get this set up at home and look forward to the answers I receive so I can learn more about Java and Emacs.</p>
+
+        "))) ("How to disable indentation in tex-latex-block" "<p>I'm using LaTeX mode in emacs and I want to disable indentation when I use the command tex-latex-block (C-c C-o). Whenever I type C-c C-o in LaTeX mode it starts by indenting the opening environment as below:</p>
+<pre><code>  \\begin{
+</code></pre>
+<p>and this is what I would like it to do:</p>
+<pre><code>\\begin{
+</code></pre>" "http://emacs.stackexchange.com/questions/31204/how-to-disable-indentation-in-tex-latex-block" (22713 45768) old 3 nil nil ((guid nil "http://emacs.stackexchange.com/q/31204") (id nil "http://emacs.stackexchange.com/q/31204") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "How to disable indentation in tex-latex-block") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "latex"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "indentation"))) (author nil (name nil "José de Siqueira") (uri nil "http://emacs.stackexchange.com/users/15108")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/31204/how-to-disable-indentation-in-tex-latex-block"))) (published nil "2017-03-03T18:15:36Z") (updated nil "2017-03-03T18:15:36Z") (summary ((type . "html")) "
+
+            <p>I'm using LaTeX mode in emacs and I want to disable indentation when I use the command tex-latex-block (C-c C-o). Whenever I type C-c C-o in LaTeX mode it starts by indenting the opening environment as below:</p>
+
+<pre><code>  \\begin{
+</code></pre>
+
+<p>and this is what I would like it to do:</p>
+
+<pre><code>\\begin{
+</code></pre>
+
+        "))) ("Key bindings are not recognized with non-Latin keyboard layouts on Ubuntu" "<p>A lot of times I have to change the input language of the keyboard (from English to a different one) causing the problem of the Emacs commands to not be recognized.</p>
+<p>Normally when you press Ctrl+A you move to the beginning of the line. When I have a different language than English selected then it says \"C-α undefined\".</p>
+<p>Is there a way to make them independent of the language selected? All editors support this by default so I am sure that there has to be a way.</p>
+<p>I am using Ubuntu 16.04 and I installed Emacs through the terminal. It is the 24.5.1 version. I haven't configured the keyboard at all except having included one more language as a possible input.</p>" "http://emacs.stackexchange.com/questions/31207/key-bindings-are-not-recognized-with-non-latin-keyboard-layouts-on-ubuntu" (22713 60922) old 2 nil nil ((guid nil "http://emacs.stackexchange.com/q/31207") (id nil "http://emacs.stackexchange.com/q/31207") (rank ((scheme . "http://emacs.stackexchange.com")) "1") (title ((type . "text")) "Key bindings are not recognized with non-Latin keyboard layouts on Ubuntu") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "key-bindings"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "ubuntu"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "x11"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "keyboard-layout"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "localization"))) (author nil (name nil "Adam") (uri nil "http://emacs.stackexchange.com/users/2248")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/31207/key-bindings-are-not-recognized-with-non-latin-keyboard-layouts-on-ubuntu"))) (published nil "2017-03-03T22:06:12Z") (updated nil "2017-03-03T22:28:10Z") (summary ((type . "html")) "
+
+            <p>A lot of times I have to change the input language of the keyboard (from English to a different one) causing the problem of the Emacs commands to not be recognized.</p>
+
+<p>Normally when you press Ctrl+A you move to the beginning of the line. When I have a different language than English selected then it says \"C-α undefined\".</p>
+
+<p>Is there a way to make them independent of the language selected? All editors support this by default so I am sure that there has to be a way.</p>
+
+<p>I am using Ubuntu 16.04 and I installed Emacs through the terminal. It is the 24.5.1 version. I haven't configured the keyboard at all except having included one more language as a possible input.</p>
+
+        "))) ("mode line time not updating" "<p>I'm using powerline for my modeline and I have placed a clock within the modeline. This clock is only updating when I'm within that buffer, if I have another buffer up the clock freezes until that buffer is activated.</p>
+<pre><code>;;Initalise powerline mode line theme. Used with moe-theme
+(use-package powerline
+:defer 5
+:config
+;; Time &amp; Date
+(display-time-mode)
+(defpowerline display-time display-time-string)
+(setq display-time-format \"%H:%M\")
+;; Display battery
+(display-battery-mode)
+(defpowerline display-battery display-battery-string)
+(setq battery-mode-line-format \"%L %b%p%%\") ; \"[%L %b%p%% %t]\"
+(defvar lunaryorn-vc-mode-line
+'(\" \" (:propertize
+;; Strip the backend name from the VC status information
+(:eval (let ((backend (symbol-name (vc-backend (buffer-file-name)))))
+(substring vc-mode (+ (length backend) 2))))
+face font-lock-variable-name-face))
+\"Mode line format for VC Mode.\")
+(put 'lunaryorn-vc-mode-line 'risky-local-variable t)
+;; Setup my mode line
+(setq-default mode-line-format
+(list \"%e\" ; print error message about full memory.
+'(:eval (append
+(list
+(powerline-lcl             'left nil  )
+(powerline-rmw             'left nil  )
+(powerline-buffer-id       'left nil   powerline-color1                 )
+(powerline-major-mode      'left       powerline-color1                 )
+(powerline-minor-modes     'left       powerline-color1                 )
+(powerline-narrow          'left       powerline-color1 powerline-color2)
+(lunaryorn-vc-mode-line    'center     powerline-color2                 )
+(powerline-pull-right (list
+(powerline-row             'right     powerline-color1 powerline-color2)
+(powerline-make-text       \":\"        powerline-color1)
+(powerline-column          'right     powerline-color1)
+(powerline-percent         'right nil powerline-color1)
+(powerline-display-time    'right nil )
+(powerline-display-battery 'right nil)
+(powerline-make-text       \" \"    nil)))
+)))))
+;; Remove the load
+(setq display-time-default-load-average nil)
+;; Remove the mail
+(setq display-time-mail-string \"\")
+(setq display-time-use-mail-icon nil)
+;; Turn buffer size off
+(setq size-indication-mode \"\")
+(setq visible-bell 1)
+(force-mode-line-update)
+)
+</code></pre>" "http://emacs.stackexchange.com/questions/31208/mode-line-time-not-updating" (22713 61824) old 1 nil nil ((guid nil "http://emacs.stackexchange.com/q/31208") (id nil "http://emacs.stackexchange.com/q/31208") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "mode line time not updating") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "mode-line"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "time-date"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "powerline"))) (author nil (name nil "map7") (uri nil "http://emacs.stackexchange.com/users/9463")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/31208/mode-line-time-not-updating"))) (published nil "2017-03-03T22:43:12Z") (updated nil "2017-03-03T22:43:12Z") (summary ((type . "html")) "
+
+            <p>I'm using powerline for my modeline and I have placed a clock within the modeline. This clock is only updating when I'm within that buffer, if I have another buffer up the clock freezes until that buffer is activated.</p>
+
+<pre><code>;;Initalise powerline mode line theme. Used with moe-theme
+
+(use-package powerline
+  :defer 5
+  :config
+  ;; Time &amp; Date
+  (display-time-mode)
+  (defpowerline display-time display-time-string)
+  (setq display-time-format \"%H:%M\") 
+
+  ;; Display battery
+  (display-battery-mode)
+  (defpowerline display-battery display-battery-string)
+  (setq battery-mode-line-format \"%L %b%p%%\") ; \"[%L %b%p%% %t]\"
+
+  (defvar lunaryorn-vc-mode-line
+    '(\" \" (:propertize
+           ;; Strip the backend name from the VC status information
+           (:eval (let ((backend (symbol-name (vc-backend (buffer-file-name)))))
+                    (substring vc-mode (+ (length backend) 2))))
+           face font-lock-variable-name-face))
+    \"Mode line format for VC Mode.\")
+  (put 'lunaryorn-vc-mode-line 'risky-local-variable t)
+
+  ;; Setup my mode line
+  (setq-default mode-line-format
+                (list \"%e\" ; print error message about full memory.
+                      '(:eval (append
+                               (list
+                                (powerline-lcl             'left nil  )
+                                (powerline-rmw             'left nil  )
+                                (powerline-buffer-id       'left nil   powerline-color1                 )
+                                (powerline-major-mode      'left       powerline-color1                 )
+                                (powerline-minor-modes     'left       powerline-color1                 )
+                                (powerline-narrow          'left       powerline-color1 powerline-color2)
+                                (lunaryorn-vc-mode-line    'center     powerline-color2                 )
+
+                                (powerline-pull-right (list 
+                                                       (powerline-row             'right     powerline-color1 powerline-color2)
+                                                       (powerline-make-text       \":\"        powerline-color1)
+                                                       (powerline-column          'right     powerline-color1)
+                                                       (powerline-percent         'right nil powerline-color1)
+                                                       (powerline-display-time    'right nil )
+                                                       (powerline-display-battery 'right nil)
+                                                       (powerline-make-text       \" \"    nil)))
+                                )))))
+
+
+  ;; Remove the load
+  (setq display-time-default-load-average nil)
+
+  ;; Remove the mail
+  (setq display-time-mail-string \"\")
+  (setq display-time-use-mail-icon nil)
+
+  ;; Turn buffer size off
+  (setq size-indication-mode \"\")
+
+  (setq visible-bell 1)
+
+  (force-mode-line-update)
+  )
+</code></pre>
+
+        "))) ("How to install sage-shell-mode with Emacs 25.1?" "<p>I would like to install <a href=\"https://github.com/sagemath/sage-shell-mode\" rel=\"nofollow\"><code>sage-shell-mode</code></a>. Now I read the README, and it indicated that with MELPA added to my package archive list I should be able to install <code>sage-shell-mode</code> with (after pressing <kbd>M</kbd>+<kbd>x</kbd>, of course) <code>package-install sage-shell-mode</code>. But this failed for me (i.e., <code>sage-shell-mode</code> was <strong>not</strong> found). <a href=\"https://github.com/fusion809/emacs/raw/322cd0376ce823b7071175dd3fcf2bdffea821d8/.emacs\" rel=\"nofollow\">Here</a> is my <code>~/.emacs</code> file, most notably this is how I enabled my package archives:</p>
+<pre><code>(package-initialize)
+...
+(add-to-list 'package-archives  (quote
+((\"gnu\" . \"http://elpa.gnu.org/packages/\")
+(\"melpa\" . \"http://melpa.org/packages/\")
+(\"marmalade\" . \"https://marmalade-repo.org/packages/\")
+(\"melpa-stable\" . \"http://stable.melpa.org/packages/\")
+)))
+</code></pre>
+<p>Now I'm wondering if I made a mistake or whether <code>sage-shell-mode</code> is for whatever reason incompatible with Emacs 25.1. I have also run <code>package-refresh-contents</code> too, since I last updated my <code>~/.emacs</code> file. </p>" "http://emacs.stackexchange.com/questions/27570/how-to-install-sage-shell-mode-with-emacs-25-1" (22714 196) new 19 nil nil ((guid nil "http://emacs.stackexchange.com/q/27570") (id nil "http://emacs.stackexchange.com/q/27570") (rank ((scheme . "http://emacs.stackexchange.com")) "0") (title ((type . "text")) "How to install sage-shell-mode with Emacs 25.1?") (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "package-repositories"))) (category ((scheme . "http://emacs.stackexchange.com/tags") (term . "version-compatibilty"))) (author nil (name nil "Brenton Horne") (uri nil "http://emacs.stackexchange.com/users/11131")) (link ((rel . "alternate") (href . "http://emacs.stackexchange.com/questions/27570/how-to-install-sage-shell-mode-with-emacs-25-1"))) (published nil "2016-10-04T16:32:51Z") (updated nil "2017-03-03T23:48:20Z") (summary ((type . "html")) "
+
+            <p>I would like to install <a href=\"https://github.com/sagemath/sage-shell-mode\" rel=\"nofollow\"><code>sage-shell-mode</code></a>. Now I read the README, and it indicated that with MELPA added to my package archive list I should be able to install <code>sage-shell-mode</code> with (after pressing <kbd>M</kbd>+<kbd>x</kbd>, of course) <code>package-install sage-shell-mode</code>. But this failed for me (i.e., <code>sage-shell-mode</code> was <strong>not</strong> found). <a href=\"https://github.com/fusion809/emacs/raw/322cd0376ce823b7071175dd3fcf2bdffea821d8/.emacs\" rel=\"nofollow\">Here</a> is my <code>~/.emacs</code> file, most notably this is how I enabled my package archives:</p>
+
+<pre><code>(package-initialize)
+...
+(add-to-list 'package-archives  (quote
+((\"gnu\" . \"http://elpa.gnu.org/packages/\")
+    (\"melpa\" . \"http://melpa.org/packages/\")
+    (\"marmalade\" . \"https://marmalade-repo.org/packages/\")
+    (\"melpa-stable\" . \"http://stable.melpa.org/packages/\")
+    )))
+</code></pre>
+
+<p>Now I'm wondering if I made a mistake or whether <code>sage-shell-mode</code> is for whatever reason incompatible with Emacs 25.1. I have also run <code>package-refresh-contents</code> too, since I last updated my <code>~/.emacs</code> file. </p>
+
+        "))))

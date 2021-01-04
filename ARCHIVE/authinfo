@@ -1,0 +1,2 @@
+machine imap.gmail.com login david.hisel@gmail.com password parrilemmi9899 port 993
+machine smtp.gmail.com login david.hisel@gmail.com password parrilemmi9899 port 587
