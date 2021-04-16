@@ -6,3 +6,6 @@ ac-comphist.dat
 el-get
 elpa/*
 !elpa/.placeholder
+.emacs.desktop
+transient
+var
