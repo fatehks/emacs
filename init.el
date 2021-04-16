@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2020-12-16 08:51:42 dhisel1>
+;; Time-stamp: <2021-04-16 11:04:50 dhisel1>
 
 ;;; Commentary:
 
@@ -127,6 +127,10 @@
 (package-install 'go-complete)
 (package-install 'go-direx)
 (package-install 'projectile)
+
+(package-install 'cider)
+(package-install 'paredit)
+(package-install 'company)
 
 (package-install 'markdown-mode)
 (package-install 'markdown-toc)
@@ -638,4 +642,4 @@ Spaces at the start of FILENAME (sans directory) are removed."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (json-navigator geiser-kawa geiser groovy-mode dracula-theme gitlab-ci-mode markdown-mode go-mode yaml-mode w3m terraform-mode sr-speedbar projectile nginx-mode mustache-mode mustache markdown-toc magit js2-mode hyperbole graphviz-dot-mode go-playground go-direx go-complete gitlab-ci-mode-flycheck gitlab fixmee edit-indirect dockerfile-mode dired-sidebar csv-mode buffer-move auto-complete ansible-vault ansible-doc ansible adoc-mode))))
+    (jiralib2 org-dashboard org-download org-jira org-kanban org-notebook org-timeline company paredit cider json-navigator geiser-kawa geiser groovy-mode dracula-theme gitlab-ci-mode markdown-mode go-mode yaml-mode w3m terraform-mode sr-speedbar projectile nginx-mode mustache-mode mustache markdown-toc magit js2-mode hyperbole graphviz-dot-mode go-playground go-direx go-complete gitlab-ci-mode-flycheck gitlab fixmee edit-indirect dockerfile-mode dired-sidebar csv-mode buffer-move auto-complete ansible-vault ansible-doc ansible adoc-mode))))
