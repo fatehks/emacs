@@ -9,3 +9,4 @@ elpa/*
 .emacs.desktop
 transient
 var
+custom.el
