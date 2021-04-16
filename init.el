@@ -1,6 +1,6 @@
 ;;; ~/.emacs.d/init.el
 
-;; Time-stamp: <2021-04-16 11:04:50 dhisel1>
+;; Time-stamp: <2021-04-16 18:54:49 dhisel1>
 
 ;;; Commentary:
 
@@ -127,6 +127,7 @@
 (package-install 'go-complete)
 (package-install 'go-direx)
 (package-install 'projectile)
+(package-install 'yasnippet)
 
 (package-install 'cider)
 (package-install 'paredit)
@@ -153,12 +154,11 @@
 (package-install 'nginx-mode)
 (package-install 'w3m)
 
-(package-install 'geiser)
-(package-install 'geiser-kawa)
 
 ;;* not used, but might be used in the future
+;;(package-install 'geiser)
+;;(package-install 'geiser-kawa)
 ;;(package-install 'iedit)
-;;(package-install 'yasnippet)
 ;;(package-install 'puppet-mode)
 ;;(package-install 'geben)
 ;;(package-install 'php-mode)
